@@ -3,7 +3,7 @@
 #include "pch.h"
 #include "framework.h"
 #include "String.hpp"
-#include <cstring>
+#include <memory.h>
 #include <new>
 
 namespace Puma {
@@ -39,6 +39,8 @@ namespace Types
 		const std::uint32_t strSize = StrSize();
 		for (std::uint32_t i = 0; i < strSize; )
 		{
+            // Determine the number of bytes in the current UTF-8 character
+			// and advance the index accordingly
 			unsigned char c = static_cast<unsigned char>(ptr[i]);
 			if ((c & 0x80) == 0)
 			{
@@ -65,8 +67,11 @@ namespace Types
 				// Invalid UTF-8 byte sequence counts as a single character
 				i += 1;
 			}
-			charCount++;
-		}
+            // Count one character
+            charCount++;
+
+			// Check for more characters
+        }
 		// return number of valid character found
         return charCount;
 	}
@@ -83,6 +88,12 @@ namespace Types
     std::uint32_t String::VarSize() const noexcept
     {
         return sizeof(String);
+	}
+
+	// get pointer to string data
+	const char* String::Data() const noexcept
+	{
+		return isShort() ? shortStr.data : longStr.ptr;
 	}
 
     // String factory, initializes from a C-style string and returns the initialized string.
@@ -109,7 +120,7 @@ namespace Types
             newStr.shortStr.tag = static_cast<std::uint8_t>(strSize & LENGTH_MASK);
             if (strSize > 0)
             {
-                std::memcpy(newStr.shortStr.data, cstr, strSize);
+                memcpy_s(newStr.shortStr.data, sizeof(newStr.shortStr.data), cstr, strSize);
             }
 			// else empty string
         }
@@ -122,7 +133,7 @@ namespace Types
             char* buf = new (std::nothrow) char[strSize]; // no terminator stored
             if (buf)
             {
-                std::memcpy(buf, cstr, strSize);
+                memcpy_s(buf, sizeof(buf), cstr, strSize);
                 // Store pointer directly; width matches platform.
                 newStr.longStr.ptr = buf;
             }
@@ -152,10 +163,10 @@ namespace Types
 
     // Assignment
     // if lvalue is owner, call finalize before the assignment
-    void String::operator=(String other) noexcept
+    void String::operator=(String source) noexcept
     {
-        str.firstHalf = other.str.firstHalf;
-		str.secondHalf = other.str.secondHalf;
+        str.firstHalf = source.str.firstHalf;
+		str.secondHalf = source.str.secondHalf;
 		return;
     }
 } // namespace Types

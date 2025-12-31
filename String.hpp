@@ -20,6 +20,9 @@ namespace Types
 		// get variable size - variable size in bytes
         std::uint32_t VarSize() const noexcept;
 
+		// get pointer to string data
+		const char* Data() const noexcept;
+
         // String factory
         // Initializes from a C-style string and returns the initialized string.
         // if cstr is null, return empty string
@@ -31,7 +34,7 @@ namespace Types
 
         // Assignment
         // if lvalue is owner, call finalize before the assignment
-        void operator=(String other) noexcept;
+        void operator=(String source) noexcept;
 
 
 
@@ -46,7 +49,7 @@ namespace Types
     #else
     #error Unsupported pointer size
     #endif
-		// copy union
+		// copy or zero the union
         struct { std::uint64_t firstHalf; std::uint64_t secondHalf; } str;
 
         // Masks (private) - UPPER_CASE
