@@ -1,6 +1,6 @@
 #pragma once
 
-#include "String.hpp"
+#include "../PumaTypes/String.hpp"
 
 namespace Puma {
 namespace Console

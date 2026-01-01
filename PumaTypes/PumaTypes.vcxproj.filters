@@ -24,23 +24,13 @@
     <ClInclude Include="String.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Console.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="String.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Console.cpp">
+    <ClCompile Include="String.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="gitignore .gitignore" />
-    <None Include="PumaTypes.sln" />
   </ItemGroup>
 </Project>
