@@ -28,6 +28,9 @@ namespace Types
         // if cstr is null, return empty string
         static String initialize(const char* cstr = NULL) noexcept;
 
+        // Initializes from another Puma String instance (copy factory)
+        static String initialize(String source) noexcept;
+
         // If is owner, releases heap storage for long strings.
         // Set to empty string
         void Finalize(bool isOwner = false) noexcept;

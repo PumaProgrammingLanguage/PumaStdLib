@@ -148,6 +148,15 @@ namespace Types
 		return newStr;
     }
 
+    // String factory overload, initializes from another Puma string and returns a copy.
+    String String::initialize(String source) noexcept
+    {
+        String newStr;
+        newStr.str.firstHalf = source.str.firstHalf;
+        newStr.str.secondHalf = source.str.secondHalf;
+        return newStr;
+    }
+
     // delete the long string buffer if any
 	// initialize to empty string
     void String::Finalize(bool isOwner) noexcept
