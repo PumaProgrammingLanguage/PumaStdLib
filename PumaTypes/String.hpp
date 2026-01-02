@@ -12,6 +12,14 @@ namespace Types
     union String
     {
     public:
+        // Lifetime
+        String() noexcept;
+        String(const char* cstr) noexcept;
+        String(const String& source) noexcept;
+        ~String() noexcept;
+
+        String& operator=(const String& source) noexcept;
+
         // Public API
 		// get str length - length in characters (code points)
 		std::uint32_t Length() const noexcept;
@@ -22,24 +30,6 @@ namespace Types
 
 		// get pointer to string data
 		const char* Data() const noexcept;
-
-        // String factory
-        // Initializes from a C-style string and returns the initialized string.
-        // if cstr is null, return empty string
-        static String initialize(const char* cstr = NULL) noexcept;
-
-        // Initializes from another Puma String instance (copy factory)
-        static String initialize(String source) noexcept;
-
-        // If is owner, releases heap storage for long strings.
-        // Set to empty string
-        void Finalize(bool isOwner = false) noexcept;
-
-        // Assignment
-        // if lvalue is owner, call finalize before the assignment
-        void operator=(String source) noexcept;
-
-
 
     private:
         // Layout (private)
@@ -63,6 +53,9 @@ namespace Types
         // Helpers (private) - lowerCamelCase
         bool isShort() const noexcept;
         bool isLong()  const noexcept;
+
+        void release() noexcept;
+        void copyFrom(const String& source) noexcept;
     };
 #pragma pack(pop)
 

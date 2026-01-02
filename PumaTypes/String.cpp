@@ -9,6 +9,79 @@
 namespace Puma {
 namespace Types
 {
+
+	String::String() noexcept
+	{
+		str.firstHalf = 0;
+		str.secondHalf = 0;
+	}
+
+	String::String(const char* cstr) noexcept
+		: String()
+	{
+		// handle null input
+		if (!cstr)
+		{
+			return;
+		}
+
+		const std::size_t strSize = std::strlen(cstr);
+
+		// decide short vs long string
+		if (strSize <= sizeof(shortStr.data))
+		{
+			// short string
+			shortStr.tag = static_cast<std::uint8_t>(strSize & LENGTH_MASK);
+			if (strSize > 0)
+			{
+				memcpy_s(shortStr.data, sizeof(shortStr.data), cstr, strSize);
+			}
+		}
+		else
+		{
+			// long string
+			longStr.tag = LONG_MASK;
+			longStr.strSize = static_cast<std::uint32_t>(strSize);
+
+			char* buf = new (std::nothrow) char[strSize];
+			if (buf != nullptr)
+			{
+				// allocation succeeded, copy string data
+				memcpy_s(buf, strSize, cstr, strSize);
+				longStr.ptr = buf;
+			}
+			else
+			{
+				// allocation failed, set to empty string
+				str.firstHalf = 0;
+				str.secondHalf = 0;
+			}
+		}
+	}
+
+	String::String(const String& source) noexcept
+		: String()
+	{
+		copyFrom(source);
+	}
+
+	String::~String() noexcept
+	{
+		release();
+	}
+
+	String& String::operator=(const String& source) noexcept
+	{
+		// if same object, just return the current object
+		if (this == &source)
+		{
+			return *this;
+		}
+
+		copyFrom(source);
+		return *this;
+	}
+
 	// test for short string
     bool String::isShort() const noexcept
     {
@@ -96,87 +169,50 @@ namespace Types
 		return isShort() ? shortStr.data : longStr.ptr;
 	}
 
-    // String factory, initializes from a C-style string and returns the initialized string.
-    // if cstr is null, return empty string
-    String String::initialize(const char* cstr) noexcept
-    {
-		String newStr;
-        // zero the string - this creates an empty string
-        newStr.str.firstHalf = 0;
-        newStr.str.secondHalf = 0;
+	void String::release() noexcept
+	{
+		if (isLong() && longStr.ptr != nullptr)
+		{
+			delete[] longStr.ptr;
+		}
 
-        if (!cstr)
-        {
-			// return empty string
-            return newStr;
-        }
- 
-        const std::size_t strSize = std::strlen(cstr);
-
-        if (strSize <= 15)
-        {
-            // Short string
-            // MSB stays 0
-            newStr.shortStr.tag = static_cast<std::uint8_t>(strSize & LENGTH_MASK);
-            if (strSize > 0)
-            {
-                memcpy_s(newStr.shortStr.data, sizeof(newStr.shortStr.data), cstr, strSize);
-            }
-			// else empty string
-        }
-        else
-        {
-            // Long string
-            newStr.longStr.tag = LONG_MASK; // set MSB=1
-            newStr.longStr.strSize = static_cast<std::uint32_t>(strSize);
-
-            char* buf = new (std::nothrow) char[strSize]; // no terminator stored
-            if (buf)
-            {
-                memcpy_s(buf, sizeof(buf), cstr, strSize);
-                // Store pointer directly; width matches platform.
-                newStr.longStr.ptr = buf;
-            }
-            else
-            {
-                // Allocation failed: fall back to empty string
-                newStr.str.firstHalf = 0;
-                newStr.str.secondHalf = 0;
-            }
-        }
-
-		return newStr;
-    }
-
-    // String factory overload, initializes from another Puma string and returns a copy.
-    String String::initialize(String source) noexcept
-    {
-        String newStr;
-        newStr.str.firstHalf = source.str.firstHalf;
-        newStr.str.secondHalf = source.str.secondHalf;
-        return newStr;
-    }
-
-    // delete the long string buffer if any
-	// initialize to empty string
-    void String::Finalize(bool isOwner) noexcept
-    {
-		if (isOwner && isLong() && longStr.ptr != nullptr)
-        {
-            delete[] longStr.ptr;
-        }
-		// Set to empty string
-        str.firstHalf = 0;
+		str.firstHalf = 0;
 		str.secondHalf = 0;
-    }
+	}
 
-    // Assignment
-    // if lvalue is owner, call finalize before the assignment
-    void String::operator=(String source) noexcept
-    {
-        str.firstHalf = source.str.firstHalf;
-		str.secondHalf = source.str.secondHalf;
-		return;
-    }
+	void String::copyFrom(const String& source) noexcept
+	{
+		// check for short string
+		if (source.isShort())
+		{
+			// copy short string directly
+			str.firstHalf = source.str.firstHalf;
+			str.secondHalf = source.str.secondHalf;
+			return;
+		}
+		// check for long string
+		if (source.isLong() && source.longStr.ptr != nullptr)
+		{
+			// allocate buffer for long string
+			const std::size_t bufferSize = static_cast<std::size_t>(source.longStr.strSize);
+			if (bufferSize > 0)
+			{
+				char* buffer = new (std::nothrow) char[bufferSize];
+				// check if allocation succeeded
+				if (buffer != nullptr)
+				{
+					// copy string data
+					memcpy_s(buffer, bufferSize, source.longStr.ptr, bufferSize);
+					longStr.tag = source.longStr.tag;
+					longStr.strSize = static_cast<std::uint32_t>(bufferSize);
+					longStr.ptr = buffer;
+					return;
+				}
+			}
+		}
+		// if we reach here, the copy failed, set to empty string
+		str.firstHalf = 0;
+		str.secondHalf = 0;
+	}
 } // namespace Types
 } // namespace Puma
