@@ -2,6 +2,7 @@
 #include "framework.h"
 #include "Console.hpp"
 #include <iostream>
+#include <string>
 
 namespace Puma {
 namespace Console
@@ -10,7 +11,7 @@ namespace Console
     void Write(const Types::String& str) noexcept
     {
         const std::uint32_t strSize = str.StrSize();
-        
+
         if (strSize == 0)
         {
             // Empty string, nothing to output
@@ -29,6 +30,32 @@ namespace Console
     {
         Write(str);
         std::cout << std::endl;
+    }
+
+    // Reads the next whitespace-delimited token from standard input
+    Types::String Read() noexcept
+    {
+        std::string buffer;
+        if (!(std::cin >> buffer))
+        {
+            std::cin.clear();
+            return Types::String();
+        }
+
+        return Types::String(buffer.c_str());
+    }
+
+    // Reads the next line from standard input (newline excluded)
+    Types::String ReadLn() noexcept
+    {
+        std::string buffer;
+        if (!std::getline(std::cin, buffer))
+        {
+            std::cin.clear();
+            return Types::String();
+        }
+
+        return Types::String(buffer.c_str());
     }
 
 } // namespace Console
