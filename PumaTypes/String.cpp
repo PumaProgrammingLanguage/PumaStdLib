@@ -190,8 +190,8 @@ namespace Types
 			str.secondHalf = source.str.secondHalf;
 			return;
 		}
-		// check for long string
-		if (source.isLong() && source.longStr.ptr != nullptr)
+		// is long string, check for valid pointer
+		if (source.longStr.ptr != nullptr)
 		{
 			// allocate buffer for long string
 			const std::size_t bufferSize = static_cast<std::size_t>(source.longStr.strSize);
