@@ -52,7 +52,7 @@ namespace Console
         }
 
         // Write the string bytes to stdout (no null terminator needed)
-        std::cout.write(str.Begin(), strSize);
+        std::cout.write(str.BeginConst(), strSize);
     }
 
     // Writes a Puma String to standard output followed by a newline

@@ -1,5 +1,6 @@
 // PumaTypes.cpp : Defines the functions for the static library.
 //
+
 #include "pch.h"
 #include "framework.h"
 #include "String.hpp"
@@ -11,6 +12,7 @@ namespace Types
 {
 
 	String::String() noexcept
+		: m_currentConst(nullptr)
 	{
 		str.firstHalf = 0;
 		str.secondHalf = 0;
@@ -178,41 +180,116 @@ namespace Types
 
 		str.firstHalf = 0;
 		str.secondHalf = 0;
+		m_currentConst = nullptr;
 	}
 
 	void String::copyFrom(const String& source) noexcept
 	{
-		// check for short string
 		if (source.isShort())
 		{
-			// copy short string directly
 			str.firstHalf = source.str.firstHalf;
 			str.secondHalf = source.str.secondHalf;
+			m_currentConst = nullptr;
 			return;
 		}
-		// is long string, check for valid pointer
+
 		if (source.longStr.ptr != nullptr)
 		{
-			// allocate buffer for long string
 			const std::size_t bufferSize = static_cast<std::size_t>(source.longStr.strSize);
 			if (bufferSize > 0)
 			{
 				char* buffer = new (std::nothrow) char[bufferSize];
-				// check if allocation succeeded
 				if (buffer != nullptr)
 				{
-					// copy string data
 					memcpy_s(buffer, bufferSize, source.longStr.ptr, bufferSize);
 					longStr.tag = source.longStr.tag;
 					longStr.strSize = static_cast<std::uint32_t>(bufferSize);
 					longStr.ptr = buffer;
+					m_currentConst = nullptr;
 					return;
 				}
 			}
 		}
-		// if we reach here, the copy failed, set to empty string
+
 		str.firstHalf = 0;
 		str.secondHalf = 0;
+		m_currentConst = nullptr;
 	}
+
+	// iterator range support
+	const char* String::BeginConst() const noexcept
+	{
+		m_currentConst = data();
+		return m_currentConst;
+	}
+
+	const char* String::EndConst() const noexcept
+	{
+		return data() + StrSize();
+	}
+
+	const char* String::NextConst() const noexcept
+	{
+		const char* begin = data();
+		const char* end = EndConst();
+
+		if (begin == nullptr || begin == end)
+		{
+			m_currentConst = nullptr;
+			return nullptr;
+		}
+
+		// If not started yet, start at begin
+		if (m_currentConst == nullptr)
+		{
+			m_currentConst = begin;
+			return m_currentConst;
+		}
+
+		if (m_currentConst < begin || m_currentConst >= end)
+		{
+			m_currentConst = nullptr;
+			return nullptr;
+		}
+
+		const char* next = m_currentConst + 1;
+		if (next >= end)
+		{
+			m_currentConst = nullptr;
+			return nullptr;
+		}
+
+		m_currentConst = next;
+		return m_currentConst;
+	}
+
+	const char* String::PreviousConst() const noexcept
+	{
+		const char* begin = data();
+		const char* end = EndConst();
+
+		if (begin == nullptr || begin == end)
+		{
+			m_currentConst = nullptr;
+			return nullptr;
+		}
+
+		// If not started yet, start from last valid byte
+		if (m_currentConst == nullptr)
+		{
+			m_currentConst = end - 1;
+			return m_currentConst;
+		}
+
+		if (m_currentConst <= begin || m_currentConst > end)
+		{
+			m_currentConst = nullptr;
+			return nullptr;
+		}
+
+		m_currentConst = m_currentConst - 1;
+		return m_currentConst;
+	}
+
 } // namespace Types
 } // namespace Puma

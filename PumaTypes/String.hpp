@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Iterator.hpp"
 #include <cstdint>
 #include <cstddef>
 #include <cstring>
@@ -29,8 +30,10 @@ namespace Types
         std::uint32_t VarSize() const noexcept;
 
 		// iterator range support
-		const char* Begin() const noexcept { return data(); }
-		const char* End()   const noexcept { return data() + StrSize(); }
+		const char* BeginConst() const noexcept;
+        const char* EndConst() const noexcept;
+        const char* NextConst() const noexcept;
+        const char* PreviousConst() const noexcept;
 
     private:
         // Layout (private)
@@ -60,6 +63,9 @@ namespace Types
 
         void release() noexcept;
         void copyFrom(const String& source) noexcept;
+
+        // iterator state
+        mutable const char* m_currentConst;
     };
 #pragma pack(pop)
 

@@ -47,7 +47,7 @@ namespace File
 
 		close();
 
-		std::string native(path.Begin(), path.End());
+		std::string native(path.BeginConst(), path.EndConst());
 		std::replace(native.begin(), native.end(), '/', '\\');
 
 		const char* modeString = nullptr;
@@ -155,7 +155,7 @@ namespace File
 			return true;
 		}
 
-		const std::size_t written = std::fwrite(text.Begin(), sizeof(char), size, handle);
+		const std::size_t written = std::fwrite(text.BeginConst(), sizeof(char), size, handle);
 		return written == size;
 	}
 
