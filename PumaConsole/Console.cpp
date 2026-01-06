@@ -17,31 +17,27 @@ namespace
 namespace Puma {
 namespace Console
 {
-    void Initialize() noexcept
-    {
-    #if defined(_WIN32)
-        if (!g_codePageSaved)
-        {
-            g_originalOutputCodePage = GetConsoleOutputCP();
-            g_originalInputCodePage = GetConsoleCP();
-            g_codePageSaved = true;
-        }
-        SetConsoleOutputCP(CP_UTF8);
-        SetConsoleCP(CP_UTF8);
-    #endif
-        std::ios::sync_with_stdio(false);
-    }
+    CommandPrompt* commandPrompt = nullptr;
 
-    void Finalize() noexcept
+	// Initializes console IO (UTF-8, unsynced stdio)
+	void Initialize() noexcept
     {
-    #if defined(_WIN32)
-        if (g_codePageSaved)
-        {
-            SetConsoleOutputCP(g_originalOutputCodePage);
-            SetConsoleCP(g_originalInputCodePage);
-            g_codePageSaved = false;
-        }
-    #endif
+		// Already initialized
+        if (commandPrompt != nullptr)
+			return;
+
+        commandPrompt = new CommandPrompt();
+	}
+
+	// Restores console IO state changed during Initialize
+	void Finalize() noexcept
+    {
+		// Already finalized
+		if (commandPrompt == nullptr)
+			return;
+
+        delete commandPrompt;
+        commandPrompt = nullptr;
     }
 
     // Writes a Puma String to standard output
@@ -55,11 +51,8 @@ namespace Console
             return;
         }
 
-        // Get pointer to string data using public accessor
-        const char* ptr = str.Data();
-
         // Write the string bytes to stdout (no null terminator needed)
-        std::cout.write(ptr, strSize);
+        std::cout.write(str.Begin(), strSize);
     }
 
     // Writes a Puma String to standard output followed by a newline
@@ -100,6 +93,47 @@ namespace Console
 
         return Types::String(buffer.c_str());
     }
+
+    // Initializes console IO (UTF-8, unsynced stdio)
+    CommandPrompt::CommandPrompt() noexcept
+    {
+        if (m_visible)
+			return;
+
+#if defined(_WIN32)
+        if (!g_codePageSaved)
+        {
+            g_originalOutputCodePage = GetConsoleOutputCP();
+            g_originalInputCodePage = GetConsoleCP();
+            g_codePageSaved = true;
+        }
+        SetConsoleOutputCP(CP_UTF8);
+        SetConsoleCP(CP_UTF8);
+#endif
+        std::ios::sync_with_stdio(false);
+
+        // Show command prompt
+		m_visible = true;
+    }
+
+    // Restores console IO state changed during Initialize
+	CommandPrompt::~CommandPrompt() noexcept
+    {
+		if (!m_visible)
+            return;
+
+#if defined(_WIN32)
+        if (g_codePageSaved)
+        {
+            SetConsoleOutputCP(g_originalOutputCodePage);
+            SetConsoleCP(g_originalInputCodePage);
+            g_codePageSaved = false;
+        }
+#endif
+
+        // Hide command prompt
+		m_visible = false;
+	}
 
 } // namespace Console
 } // namespace Puma

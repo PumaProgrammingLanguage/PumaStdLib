@@ -28,8 +28,9 @@ namespace Types
 		// get variable size - variable size in bytes
         std::uint32_t VarSize() const noexcept;
 
-		// get pointer to string data
-		const char* Data() const noexcept;
+		// iterator range support
+		const char* Begin() const noexcept { return data(); }
+		const char* End()   const noexcept { return data() + StrSize(); }
 
     private:
         // Layout (private)
@@ -49,6 +50,9 @@ namespace Types
         static constexpr std::uint8_t SHORT_MASK = 0x80;
         static constexpr std::uint8_t LENGTH_MASK  = 0x0F;
         static constexpr std::uint8_t LONG_MASK  = 0x80;
+
+        // get pointer to string data
+        const char* data() const noexcept;
 
         // Helpers (private) - lowerCamelCase
         bool isShort() const noexcept;

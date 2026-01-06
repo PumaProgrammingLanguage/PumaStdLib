@@ -164,7 +164,7 @@ namespace Types
 	}
 
 	// get pointer to string data
-	const char* String::Data() const noexcept
+	const char* String::data() const noexcept
 	{
 		return isShort() ? shortStr.data : longStr.ptr;
 	}

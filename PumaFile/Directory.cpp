@@ -38,7 +38,7 @@ namespace File
 				return false;
 			}
 			// All modern day OSes support forward slashes, so normalize for portable code
-			std::string normalizedPath(path.Data(), path.Data() + pathSize);
+			std::string normalizedPath(path.Begin(), path.End());
 			std::replace(normalizedPath.begin(), normalizedPath.end(), '\\', '/');
 			// Set current path
 			std::error_code ec;

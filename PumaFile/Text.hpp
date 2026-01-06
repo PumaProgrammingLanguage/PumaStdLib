@@ -29,8 +29,6 @@ namespace File
 		~Text() noexcept;
 		// Assign from another Text
 		Text& operator=(Text&& other) noexcept;
-		// Opens the file at path with mode (default is READ_WRITE)
-		bool Open(const Types::String& path, OpenMode mode) noexcept;
 		// Returns true if the file is open
 		bool IsOpen() const noexcept;
 
@@ -44,8 +42,10 @@ namespace File
 		bool WriteLn(const Types::String& text) noexcept;
 
 	private:
+		// Opens the file at path with mode (default is READ_WRITE)
+		bool open(const Types::String& path, OpenMode mode) noexcept;
 		// Closes the file if open
-		void Close() noexcept;
+		void close() noexcept;
 
 		std::FILE* handle;
 	};

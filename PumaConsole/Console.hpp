@@ -5,10 +5,10 @@
 namespace Puma {
 namespace Console
 {
-    // Initializes console IO (UTF-8, unsynced stdio)
+	// Initializes console IO (UTF-8, unsynced stdio)
     void Initialize() noexcept;
 
-    // Restores console IO state changed during Initialize
+	// Restores console IO state changed during Initialize
     void Finalize() noexcept;
 
     // Writes a Puma String to standard output
@@ -26,5 +26,15 @@ namespace Console
     // Reads the next line from standard input (newline excluded)
     Types::String ReadLn() noexcept;
 
+	class CommandPrompt
+    {
+    public:
+        CommandPrompt() noexcept;
+        ~CommandPrompt() noexcept;
+
+    private:
+        // Internal state
+        bool m_visible;
+    };
 } // namespace Console
 } // namespace Puma

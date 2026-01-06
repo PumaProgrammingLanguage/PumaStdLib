@@ -16,13 +16,13 @@ namespace File
 	Text::Text(const Types::String& path, OpenMode mode) noexcept
 		: handle(nullptr)
 	{
-		Open(path, mode);
+		open(path, mode);
 	}
 
 	// Closes the file if open
 	Text::~Text() noexcept
 	{
-		Close();
+		close();
 	}
 
 	// Assign from another Text
@@ -30,7 +30,7 @@ namespace File
 	{
 		if (this != &other)
 		{
-			Close();
+			close();
 			handle = other.handle;
 		}
 
@@ -38,16 +38,16 @@ namespace File
 	}
 
 	// Opens the file at path with mode (default is READ_WRITE)
-	bool Text::Open(const Types::String& path, OpenMode mode) noexcept
+	bool Text::open(const Types::String& path, OpenMode mode) noexcept
 	{
 		if (path.StrSize() == 0)
 		{
 			return false;
 		}
 
-		Close();
+		close();
 
-		std::string native(path.Data(), path.Data() + path.StrSize());
+		std::string native(path.Begin(), path.End());
 		std::replace(native.begin(), native.end(), '/', '\\');
 
 		const char* modeString = nullptr;
@@ -155,7 +155,7 @@ namespace File
 			return true;
 		}
 
-		const std::size_t written = std::fwrite(text.Data(), sizeof(char), size, handle);
+		const std::size_t written = std::fwrite(text.Begin(), sizeof(char), size, handle);
 		return written == size;
 	}
 
