@@ -24,7 +24,7 @@
     <ClInclude Include="String.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Iterator.hpp">
+    <ClInclude Include="Charactor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -35,7 +35,7 @@
     <ClCompile Include="String.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Iterator.cpp">
+    <ClCompile Include="Charactor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,6 +1,5 @@
 // PumaTypes.cpp : Defines the functions for the static library.
 //
-
 #include "pch.h"
 #include "framework.h"
 #include "String.hpp"
@@ -14,8 +13,8 @@ namespace Types
 	String::String() noexcept
 		: m_currentConst(nullptr)
 	{
-		str.firstHalf = 0;
-		str.secondHalf = 0;
+		packedValues.firstHalf = 0;
+		packedValues.secondHalf = 0;
 	}
 
 	String::String(const char* cstr) noexcept
@@ -30,13 +29,13 @@ namespace Types
 		const std::size_t strSize = std::strlen(cstr);
 
 		// decide short vs long string
-		if (strSize <= sizeof(shortStr.data))
+		if (strSize <= sizeof(shortStr.codeUnits))
 		{
 			// short string
 			shortStr.tag = static_cast<std::uint8_t>(strSize & LENGTH_MASK);
 			if (strSize > 0)
 			{
-				memcpy_s(shortStr.data, sizeof(shortStr.data), cstr, strSize);
+				memcpy_s(shortStr.codeUnits, sizeof(shortStr.codeUnits), cstr, strSize);
 			}
 		}
 		else
@@ -48,15 +47,15 @@ namespace Types
 			char* buf = new (std::nothrow) char[strSize];
 			if (buf != nullptr)
 			{
-				// allocation succeeded, copy string data
+				// allocation succeeded, copy string codeUnits
 				memcpy_s(buf, strSize, cstr, strSize);
 				longStr.ptr = buf;
 			}
 			else
 			{
 				// allocation failed, set to empty string
-				str.firstHalf = 0;
-				str.secondHalf = 0;
+				packedValues.firstHalf = 0;
+				packedValues.secondHalf = 0;
 			}
 		}
 	}
@@ -64,7 +63,7 @@ namespace Types
 	String::String(const String& source) noexcept
 		: String()
 	{
-		copyFrom(source);
+		fromString(source);
 	}
 
 	String::~String() noexcept
@@ -80,31 +79,28 @@ namespace Types
 			return *this;
 		}
 
-		copyFrom(source);
+		fromString(source);
 		return *this;
 	}
 
-	// test for short string
     bool String::isShort() const noexcept
     {
         return (shortStr.tag & SHORT_MASK) == 0;
     }
 
-	// test for long string
     bool String::isLong() const noexcept
     {
         return (longStr.tag & LONG_MASK) != 0;
     }
 
-
     // get str length - number of characters (code points)
     std::uint32_t String::Length() const noexcept
     {
-		uint32_t charCount = 0;
+		std::uint32_t charCount = 0;
         const char* ptr;
         if (isShort())
         {
-            ptr = shortStr.data;
+            ptr = shortStr.codeUnits;
         }
         else
         {
@@ -114,44 +110,16 @@ namespace Types
 		const std::uint32_t strSize = StrSize();
 		for (std::uint32_t i = 0; i < strSize; )
 		{
-            // Determine the number of bytes in the current UTF-8 character
-			// and advance the index accordingly
-			unsigned char c = static_cast<unsigned char>(ptr[i]);
-			if ((c & 0x80) == 0)
-			{
-				// 1-byte character (ASCII)
-				i += 1;
-			}
-			else if ((c & 0xE0) == 0xC0)
-			{
-				// 2-byte character
-				i += 2;
-			}
-			else if ((c & 0xF0) == 0xE0)
-			{
-				// 3-byte character
-				i += 3;
-			}
-			else if ((c & 0xF8) == 0xF0)
-			{
-				// 4-byte character
-				i += 4;
-			}
-			else
-			{
-				// Invalid UTF-8 byte sequence counts as a single character
-				i += 1;
-			}
-            // Count one character
-            charCount++;
+			const std::uint8_t c = static_cast<std::uint8_t>(ptr[i]);
+			const std::uint8_t len = Charactor::GetCharLength(c);
 
-			// Check for more characters
+			i += len;
+            charCount++;
         }
-		// return number of valid character found
+
         return charCount;
 	}
 
-    // get str size - number of bytes used to store the string buffer
     std::uint32_t String::StrSize() const noexcept
     {
         return isShort()
@@ -159,16 +127,14 @@ namespace Types
             : static_cast<std::uint32_t>(longStr.strSize);
     }
 
-    // get variable size - number of bytes used to store the variable
     std::uint32_t String::VarSize() const noexcept
     {
         return sizeof(String);
 	}
 
-	// get pointer to string data
-	const char* String::data() const noexcept
+	const char* String::codeUnits() const noexcept
 	{
-		return isShort() ? shortStr.data : longStr.ptr;
+		return isShort() ? shortStr.codeUnits : longStr.ptr;
 	}
 
 	void String::release() noexcept
@@ -178,17 +144,17 @@ namespace Types
 			delete[] longStr.ptr;
 		}
 
-		str.firstHalf = 0;
-		str.secondHalf = 0;
+		packedValues.firstHalf = 0;
+		packedValues.secondHalf = 0;
 		m_currentConst = nullptr;
 	}
 
-	void String::copyFrom(const String& source) noexcept
+	void String::fromString(const String& source) noexcept
 	{
 		if (source.isShort())
 		{
-			str.firstHalf = source.str.firstHalf;
-			str.secondHalf = source.str.secondHalf;
+			packedValues.firstHalf = source.packedValues.firstHalf;
+			packedValues.secondHalf = source.packedValues.secondHalf;
 			m_currentConst = nullptr;
 			return;
 		}
@@ -211,26 +177,30 @@ namespace Types
 			}
 		}
 
-		str.firstHalf = 0;
-		str.secondHalf = 0;
+		packedValues.firstHalf = 0;
+		packedValues.secondHalf = 0;
 		m_currentConst = nullptr;
 	}
 
-	// iterator range support
+	String String::ToString() const noexcept
+	{
+		return String(*this);
+	}
+
 	const char* String::BeginConst() const noexcept
 	{
-		m_currentConst = data();
+		m_currentConst = codeUnits();
 		return m_currentConst;
 	}
 
 	const char* String::EndConst() const noexcept
 	{
-		return data() + StrSize();
+		return codeUnits() + StrSize();
 	}
 
 	const char* String::NextConst() const noexcept
 	{
-		const char* begin = data();
+		const char* begin = codeUnits();
 		const char* end = EndConst();
 
 		if (begin == nullptr || begin == end)
@@ -239,7 +209,6 @@ namespace Types
 			return nullptr;
 		}
 
-		// If not started yet, start at begin
 		if (m_currentConst == nullptr)
 		{
 			m_currentConst = begin;
@@ -265,7 +234,7 @@ namespace Types
 
 	const char* String::PreviousConst() const noexcept
 	{
-		const char* begin = data();
+		const char* begin = codeUnits();
 		const char* end = EndConst();
 
 		if (begin == nullptr || begin == end)
@@ -274,7 +243,6 @@ namespace Types
 			return nullptr;
 		}
 
-		// If not started yet, start from last valid byte
 		if (m_currentConst == nullptr)
 		{
 			m_currentConst = end - 1;
