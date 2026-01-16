@@ -39,12 +39,9 @@ namespace Types
 		}
 
 		const std::uint8_t first = static_cast<std::uint8_t>(cstr[0]);
-		const std::uint8_t length = GetCharLength(first);
-
-		for (std::uint8_t i = 0; i < length; ++i)
-		{
-			codeUnits[i] = static_cast<std::uint8_t>(cstr[i]);
-		}
+		const std::uint8_t length = GetCharLength(first); // 1..4
+		// Copy up to 4 bytes
+		std::memcpy(codeUnits, cstr, length);
 	}
 
 	Charactor::~Charactor() noexcept = default;
@@ -60,7 +57,7 @@ namespace Types
 
 	String Charactor::ToString() const noexcept
 	{
-		char buffer[5] = { 0, 0, 0, 0, 0 };
+		char buffer[5] = { 0 };
 
 		const std::uint8_t first = codeUnits[0];
 		if (first == 0U)
@@ -69,14 +66,10 @@ namespace Types
 			return String("");
 		}
 
-		const std::uint8_t length = GetCharLength(first);
-
-		for (std::uint8_t i = 0; i < length && i < 4; ++i)
-		{
-			buffer[i] = static_cast<char>(codeUnits[i]);
-		}
-		// Ensure null termination
-		buffer[length < 4 ? length : 4] = '\0';
+		const std::uint8_t length = GetCharLength(first); // 1..4
+		// Copy up to 4 bytes
+		std::memcpy(buffer, codeUnits, length);
+		buffer[length] = '\0';
 
 		return String(buffer);
 	}
