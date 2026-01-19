@@ -55,12 +55,34 @@ namespace Console
         std::cout.write(str.BeginConst(), strSize);
     }
 
+    // Writes a C-string to standard output
+    void Write(const char* cstr) noexcept
+    {
+        if (cstr == nullptr)
+        {
+            return;
+        }
+
+        Write(Types::String(cstr));
+    }
+
     // Writes a Puma String to standard output followed by a newline
     void WriteLn(const Types::String& str) noexcept
     {
         Write(str);
 		// Add newline, does not flush
         std::cout << '\n';
+    }
+
+    // Writes a C-string to standard output followed by a newline
+    void WriteLn(const char* cstr) noexcept
+    {
+        if (cstr == nullptr)
+        {
+            return;
+        }
+
+        WriteLn(Types::String(cstr));
     }
 
     void Flush() noexcept
