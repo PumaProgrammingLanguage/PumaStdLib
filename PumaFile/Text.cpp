@@ -40,7 +40,7 @@ namespace File
 	// Opens the file at path with mode (default is READ_WRITE)
 	bool Text::open(const Types::String& path, OpenMode mode) noexcept
 	{
-		if (path.StrSize() == 0)
+		if (path.SizeStr() == 0)
 		{
 			return false;
 		}
@@ -111,7 +111,7 @@ namespace File
 				buffer[1023] = '\0';
 				result = buffer;
 			}
-			return Types::String(result.c_str());
+			return Types::String(result.data(), result.size());
 		}
 		else
 		{
@@ -132,7 +132,7 @@ namespace File
 				result += buffer;
 			}
 
-			return Types::String(result.c_str());
+			return Types::String(result.data(), result.size());
 		}
 		else
 		{
@@ -149,7 +149,7 @@ namespace File
 			return false;
 		}
 
-		const std::uint32_t size = text.StrSize();
+		const std::uint32_t size = text.SizeStr();
 		if (size == 0)
 		{
 			return true;

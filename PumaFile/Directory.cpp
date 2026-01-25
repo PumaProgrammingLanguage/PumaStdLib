@@ -25,13 +25,13 @@ namespace File
 			std::string normalizedPath = path.string();
 			std::replace(normalizedPath.begin(), normalizedPath.end(), '\\', '/');
 			// Return as Types::String
-			return Types::String(normalizedPath.c_str());
+			return Types::String(normalizedPath.data(), normalizedPath.size());
 		}
 
 		// Set current working directory - normalized to forward slashes
 		static bool SetCurrentDirectory(const Types::String& path) noexcept
 		{
-			const std::uint32_t pathSize = path.StrSize();
+			const std::uint32_t pathSize = path.SizeStr();
 			// Empty path is invalid
 			if (pathSize == 0)
 			{

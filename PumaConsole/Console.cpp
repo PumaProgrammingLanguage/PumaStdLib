@@ -43,7 +43,7 @@ namespace Console
     // Writes a Puma String to standard output
     void Write(const Types::String& str) noexcept
     {
-        const std::uint32_t strSize = str.StrSize();
+        const std::uint32_t strSize = str.SizeStr();
 
         if (strSize == 0)
         {
@@ -63,7 +63,7 @@ namespace Console
             return;
         }
 
-        Write(Types::String(cstr));
+        Write(Types::String(cstr, std::strlen(cstr)));
     }
 
     // Writes a Puma String to standard output followed by a newline
@@ -82,7 +82,7 @@ namespace Console
             return;
         }
 
-        WriteLn(Types::String(cstr));
+        WriteLn(Types::String(cstr, std::strlen(cstr)));
     }
 
     void Flush() noexcept
@@ -100,7 +100,7 @@ namespace Console
             return Types::String();
         }
 
-        return Types::String(buffer.c_str());
+        return Types::String(buffer.c_str(), buffer.size());
     }
 
     // Reads the next line from standard input (newline excluded)
@@ -113,15 +113,12 @@ namespace Console
             return Types::String();
         }
 
-        return Types::String(buffer.c_str());
+        return Types::String(buffer.c_str(), buffer.size());
     }
 
     // Initializes console IO (UTF-8, unsynced stdio)
     CommandPrompt::CommandPrompt() noexcept
     {
-        if (m_visible)
-			return;
-
 #if defined(_WIN32)
         if (!g_codePageSaved)
         {
