@@ -15,7 +15,8 @@ namespace Types
 		// Lifetime
 		Charactor() noexcept;
 		Charactor(const Charactor& source) noexcept;
-		Charactor(const char* cstr) noexcept;
+		Charactor(const std::uint8_t* data, std::uint32_t size) noexcept;
+		Charactor(const char* data, size_t size) noexcept;
 		~Charactor() noexcept;
 
 		// Assignment
@@ -26,7 +27,7 @@ namespace Types
 
 		// Returns the number of bytes in the UTF‑8 code unit sequence starting with 'c'.
 		// Invalid leading bytes and continuation bytes return 1.
-		static std::uint8_t GetCharLength(std::uint8_t c) noexcept;
+		static std::uint8_t GetCharSize(std::uint8_t c) noexcept;
 
 	private:
 		// Raw 4-byte representation (e.g., UTF-8 bytes)

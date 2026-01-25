@@ -16,7 +16,8 @@ namespace Types
         // Lifetime
         String() noexcept;
         String(const String& source) noexcept;
-        String(const char* data, std::uint32_t byteLength) noexcept;
+        String(const std::uint8_t* data, std::uint32_t size) noexcept;
+        String(const char* data, std::size_t size) noexcept;
         ~String() noexcept;
 
         String& operator=(const String& source) noexcept;
@@ -26,9 +27,9 @@ namespace Types
 		// get str length - length in characters (code points)
 		std::uint32_t Length() const noexcept;
 		// get str size - length in bytes
-        std::uint32_t StrSize() const noexcept;
+        std::uint32_t SizeStr() const noexcept;
 		// get variable size - number of bytes used to store the variable
-        std::uint32_t VarSize() const noexcept;
+        std::uint32_t SizeVar() const noexcept;
 
 		// iterator range support
 		const char* BeginConst() const noexcept;

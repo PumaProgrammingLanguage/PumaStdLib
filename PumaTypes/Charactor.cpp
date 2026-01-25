@@ -2,13 +2,14 @@
 #include "framework.h"
 #include "Charactor.hpp"
 #include "String.hpp" // needed for Charactor::ToString()
+#include <cstddef>
 
 namespace Puma {
 namespace Types
 {
 	namespace
 	{
-		constexpr std::uint8_t UTF8CharLengthLookup[32] =
+		constexpr std::uint8_t UTF8CharSizeLookup[32] =
 		{
 			1, 1, 1, 1, 1, 1, 1, 1,
 			1, 1, 1, 1, 1, 1, 1, 1,
@@ -30,18 +31,30 @@ namespace Types
 	{
 	}
 
-	Charactor::Charactor(const char* cstr) noexcept
-		: packedValue(0U)
+	Charactor::Charactor(const char* data, std::size_t size) noexcept
+		: Charactor(reinterpret_cast<const std::uint8_t*>(data), static_cast<std::uint32_t>(size))
 	{
-		if (cstr == nullptr)
+	}
+
+	Charactor::Charactor(const std::uint8_t* data, std::uint32_t dataSize) noexcept
+	: packedValue(0U)
+	{
+		if (data == nullptr || dataSize == 0)
 		{
 			return;
 		}
 
-		const std::uint8_t first = static_cast<std::uint8_t>(cstr[0]);
-		const std::uint8_t length = GetCharLength(first); // 1..4
+		const std::uint8_t first = static_cast<std::uint8_t>(data[0]);
+		const std::uint8_t size = GetCharSize(first); // 1..4
+
+		if (size > 4 || size > dataSize)
+		{
+			// Invalid size, treat as empty character.
+			return;
+		}
+
 		// Copy up to 4 bytes
-		std::memcpy(codeUnits, cstr, length);
+		memcpy_s(codeUnits, sizeof(codeUnits), data, size);
 	}
 
 	Charactor::~Charactor() noexcept = default;
@@ -55,27 +68,27 @@ namespace Types
 		return *this;
 	}
 
-	String Charactor::ToString() const noexcept
+	Types::String Charactor::ToString() const noexcept
 	{
-		char buffer[4] = { 0 };
+		std::uint8_t buffer[4] = { 0 };
 
 		const std::uint8_t first = codeUnits[0];
 		if (first == 0U)
 		{
 			// Empty character -> empty String
-			return String();
+			return Types::String();
 		}
 
-		const std::uint8_t length = GetCharLength(first); // 1..4
+		const std::uint8_t size = GetCharSize(first); // 1..4
 		// Copy up to 4 bytes
-		std::memcpy(buffer, codeUnits, length);
+		std::memcpy(buffer, codeUnits, size);
 
-		return String(buffer, length);
+		return String(buffer, size);
 	}
 
-	std::uint8_t Charactor::GetCharLength(std::uint8_t c) noexcept
+	std::uint8_t Charactor::GetCharSize(std::uint8_t c) noexcept
 	{
-		return UTF8CharLengthLookup[c >> 3];
+		return UTF8CharSizeLookup[c >> 3];
 	}
 } // namespace Types
 } // namespace Puma

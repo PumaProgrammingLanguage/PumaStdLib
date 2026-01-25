@@ -20,36 +20,43 @@ namespace Types
 	}
 
 	// Constructs a String from raw UTF‑8 bytes and explicit length in bytes.
-	String::String(const char* data, std::uint32_t byteLength) noexcept
+	String::String(const char* data, std::size_t size) noexcept
+		: String(reinterpret_cast<const std::uint8_t*>(data), static_cast<std::uint32_t>(size))
+	{
+		// delegation is handled in the initializer list.
+	}
+
+	// Constructs a String from raw UTF‑8 bytes and explicit length in bytes.
+	String::String(const std::uint8_t* data, std::uint32_t size) noexcept
 		: String()
 	{
 		// Treat null data or zero length as empty string.
-		if (data == nullptr || byteLength == 0)
+		if (data == nullptr || size == 0)
 		{
 			return;
 		}
 
-		const std::size_t strSize = static_cast<std::size_t>(byteLength);
-
-		// Short string: store bytes inline in the union.
-		if (strSize <= sizeof(shortStr.codeUnits))
+		// Decide between short and long representation.
+		if (size <= sizeof(shortStr.codeUnits))
 		{
-			shortStr.tag = static_cast<std::uint8_t>(strSize & LENGTH_MASK);
-			if (strSize > 0)
+			// Short string: store bytes inline in the union.
+			shortStr.tag = static_cast<std::uint8_t>(size & LENGTH_MASK);
+			if (size > 0)
 			{
-				memcpy_s(shortStr.codeUnits, sizeof(shortStr.codeUnits), data, strSize);
+				memcpy(shortStr.codeUnits, data, size);
 			}
+			// else size is zero, already handled by default constructor.
 		}
 		else
 		{
 			// Long string: allocate buffer on the heap.
 			longStr.tag = LONG_MASK;
-			longStr.strSize = static_cast<std::uint32_t>(strSize);
+			longStr.strSize = static_cast<std::uint32_t>(size);
 
-			char* buf = new (std::nothrow) char[strSize];
+			char* buf = new (std::nothrow) char[size];
 			if (buf != nullptr)
 			{
-				memcpy_s(buf, strSize, data, strSize);
+				memcpy(buf, data, size);
 				longStr.ptr = buf;
 			}
 			else
@@ -115,16 +122,16 @@ namespace Types
             ptr = longStr.ptr;
 		}
 
-		const std::uint32_t strSize = StrSize();
+		const std::uint32_t strSize = SizeStr();
 
 		// Walk the UTF-8 sequence using Charactor's length helper.
 		for (std::uint32_t i = 0; i < strSize; )
 		{
 			const std::uint8_t c = static_cast<std::uint8_t>(ptr[i]);
-			const std::uint8_t len = Charactor::GetCharLength(c);
+			const std::uint8_t size = Charactor::GetCharSize(c);
 
 			// Advance by one full code point (1–4 bytes).
-			i += len;
+			i += size;
             ++charCount;
         }
 
@@ -132,7 +139,7 @@ namespace Types
 	}
 
 	// Returns the number of bytes occupied by the UTF-8 sequence (not including any terminator).
-    std::uint32_t String::StrSize() const noexcept
+    std::uint32_t String::SizeStr() const noexcept
     {
         return isShort()
             ? static_cast<std::uint32_t>(shortStr.tag & LENGTH_MASK)
@@ -140,7 +147,7 @@ namespace Types
     }
 
 	// Returns the size of the String object itself.
-    std::uint32_t String::VarSize() const noexcept
+    std::uint32_t String::SizeVar() const noexcept
     {
         return sizeof(String);
 	}
@@ -217,7 +224,7 @@ namespace Types
 	// Iterator support: one‑past‑the‑last code unit pointer.
 	const char* String::EndConst() const noexcept
 	{
-		return codeUnits() + StrSize();
+		return codeUnits() + SizeStr();
 	}
 
 	// Iterator support: advance to the next code unit (not code point).
