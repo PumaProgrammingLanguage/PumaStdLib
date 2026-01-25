@@ -15,8 +15,8 @@ namespace Types
     public:
         // Lifetime
         String() noexcept;
-        String(const char* cstr) noexcept;
         String(const String& source) noexcept;
+        String(const char* data, std::uint32_t byteLength) noexcept;
         ~String() noexcept;
 
         String& operator=(const String& source) noexcept;
@@ -51,9 +51,9 @@ namespace Types
         struct { std::uint64_t firstHalf; std::uint64_t secondHalf; } packedValues;
 
         // Masks (private) - UPPER_CASE
-        static constexpr std::uint8_t SHORT_MASK = 0x80;
-        static constexpr std::uint8_t LENGTH_MASK  = 0x0F;
-        static constexpr std::uint8_t LONG_MASK  = 0x80;
+        static constexpr std::uint8_t SHORT_MASK  = 0x80;
+        static constexpr std::uint8_t LENGTH_MASK = 0x0F;
+        static constexpr std::uint8_t LONG_MASK   = 0x80;
 
         // get pointer to string codeUnits
         const char* codeUnits() const noexcept;

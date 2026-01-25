@@ -19,26 +19,25 @@ namespace Types
 		packedValues.secondHalf = 0;
 	}
 
-	// Constructs a String from a null-terminated UTF-8 C string.
-	String::String(const char* cstr) noexcept
+	// Constructs a String from raw UTF‑8 bytes and explicit length in bytes.
+	String::String(const char* data, std::uint32_t byteLength) noexcept
 		: String()
 	{
-		// Handle null input as empty string.
-		if (!cstr)
+		// Treat null data or zero length as empty string.
+		if (data == nullptr || byteLength == 0)
 		{
 			return;
 		}
 
-		const std::size_t strSize = std::strlen(cstr);
+		const std::size_t strSize = static_cast<std::size_t>(byteLength);
 
-		// Decide between short (in-place) and long (heap) representation.
+		// Short string: store bytes inline in the union.
 		if (strSize <= sizeof(shortStr.codeUnits))
 		{
-			// Short string: store bytes inline in the union.
 			shortStr.tag = static_cast<std::uint8_t>(strSize & LENGTH_MASK);
 			if (strSize > 0)
 			{
-				memcpy_s(shortStr.codeUnits, sizeof(shortStr.codeUnits), cstr, strSize);
+				memcpy_s(shortStr.codeUnits, sizeof(shortStr.codeUnits), data, strSize);
 			}
 		}
 		else
@@ -50,8 +49,7 @@ namespace Types
 			char* buf = new (std::nothrow) char[strSize];
 			if (buf != nullptr)
 			{
-				// Allocation succeeded, copy string bytes.
-				memcpy_s(buf, strSize, cstr, strSize);
+				memcpy_s(buf, strSize, data, strSize);
 				longStr.ptr = buf;
 			}
 			else

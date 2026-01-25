@@ -57,21 +57,20 @@ namespace Types
 
 	String Charactor::ToString() const noexcept
 	{
-		char buffer[5] = { 0 };
+		char buffer[4] = { 0 };
 
 		const std::uint8_t first = codeUnits[0];
 		if (first == 0U)
 		{
 			// Empty character -> empty String
-			return String("");
+			return String();
 		}
 
 		const std::uint8_t length = GetCharLength(first); // 1..4
 		// Copy up to 4 bytes
 		std::memcpy(buffer, codeUnits, length);
-		buffer[length] = '\0';
 
-		return String(buffer);
+		return String(buffer, length);
 	}
 
 	std::uint8_t Charactor::GetCharLength(std::uint8_t c) noexcept
