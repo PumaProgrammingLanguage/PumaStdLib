@@ -16,8 +16,8 @@ namespace Types
         // Lifetime
         String() noexcept;
         String(const String& source) noexcept;
-        String(const std::uint8_t* data, std::uint32_t size) noexcept;
-        String(const char* data, std::size_t size) noexcept;
+        String(const std::uint8_t* data, std::uint32_t dataSize) noexcept;
+        String(const char* data, std::size_t dataSize) noexcept;
         ~String() noexcept;
 
         String& operator=(const String& source) noexcept;
@@ -27,15 +27,15 @@ namespace Types
 		// get str length - length in characters (code points)
 		std::uint32_t Length() const noexcept;
 		// get str size - length in bytes
-        std::uint32_t SizeStr() const noexcept;
+        std::uint32_t Size() const noexcept;
 		// get variable size - number of bytes used to store the variable
         std::uint32_t SizeVar() const noexcept;
 
 		// iterator range support
-		const char* BeginConst() const noexcept;
-        const char* EndConst() const noexcept;
-        const char* NextConst() const noexcept;
-        const char* PreviousConst() const noexcept;
+		const char* First() const noexcept;
+		const char* Last() const noexcept;
+		const char* Next() const noexcept;
+		const char* Previous() const noexcept;
 
     private:
         // Layout (private)

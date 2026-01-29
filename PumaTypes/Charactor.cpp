@@ -31,8 +31,8 @@ namespace Types
 	{
 	}
 
-	Charactor::Charactor(const char* data, std::size_t size) noexcept
-		: Charactor(reinterpret_cast<const std::uint8_t*>(data), static_cast<std::uint32_t>(size))
+	Charactor::Charactor(const char* data, std::size_t dataSize) noexcept
+		: Charactor(reinterpret_cast<const std::uint8_t*>(data), static_cast<std::uint32_t>(dataSize))
 	{
 	}
 
@@ -44,17 +44,16 @@ namespace Types
 			return;
 		}
 
-		const std::uint8_t first = static_cast<std::uint8_t>(data[0]);
-		const std::uint8_t size = GetCharSize(first); // 1..4
+		const std::uint8_t charSize = GetCharSize(data[0]); // 1..4
 
-		if (size > 4 || size > dataSize)
+		if (charSize > dataSize)
 		{
-			// Invalid size, treat as empty character.
+			// Invalid charSize, treat as empty character.
 			return;
 		}
 
 		// Copy up to 4 bytes
-		memcpy_s(codeUnits, sizeof(codeUnits), data, size);
+		memcpy_s(codeUnits, sizeof(codeUnits), data, charSize);
 	}
 
 	Charactor::~Charactor() noexcept = default;
@@ -70,23 +69,11 @@ namespace Types
 
 	Types::String Charactor::ToString() const noexcept
 	{
-		std::uint8_t buffer[4] = { 0 };
-
-		const std::uint8_t first = codeUnits[0];
-		if (first == 0U)
-		{
-			// Empty character -> empty String
-			return Types::String();
-		}
-
-		const std::uint8_t size = GetCharSize(first); // 1..4
-		// Copy up to 4 bytes
-		std::memcpy(buffer, codeUnits, size);
-
-		return String(buffer, size);
+		const std::uint8_t charSize = GetCharSize(codeUnits[0]); // 1..4
+		return String(codeUnits, charSize);
 	}
 
-	std::uint8_t Charactor::GetCharSize(std::uint8_t c) noexcept
+	std::uint8_t Charactor::GetCharSize(const std::uint8_t c) noexcept
 	{
 		return UTF8CharSizeLookup[c >> 3];
 	}
