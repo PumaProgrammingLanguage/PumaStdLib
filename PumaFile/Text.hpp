@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../PumaTypes/String.hpp"
+#include "../PumaTypes/Charactor.hpp"
 #include <cstdio>
 #include <cstdint>
 
@@ -17,9 +18,11 @@ namespace File
 			// Open for writing at end of file (appending or creating)
 			WRITE,
 			// Open for writing (overwriting existing file or creating)
-			WRITE_REPLACE,
+			WRITE_NEW,
 			// Open for reading and writing at end of file (appending or creating)
-			READ_WRITE
+			READ_WRITE,
+			// Open for reading and writing at beginning of file (replacing existing file)
+			READ_WRITE_NEW
 		};
 
 		// Default constructor
@@ -38,8 +41,12 @@ namespace File
 		Types::String ReadLn() noexcept;
 		// Writes text to the file
 		bool Write(const Types::String& text) noexcept;
+		// Writes a single Charactor to the file
+		bool Write(const Types::Charactor& ch) noexcept;
 		// Writes text followed by a newline to the file
 		bool WriteLn(const Types::String& text) noexcept;
+		// Writes a single Charactor followed by a newline to the file
+		bool WriteLn(const Types::Charactor& ch) noexcept;
 
 	private:
 		// Opens the file at path with mode (default is READ_WRITE)
@@ -48,6 +55,7 @@ namespace File
 		void close() noexcept;
 
 		std::FILE* handle;
+		bool adjustPosition;
 	};
 } // namespace File
 } // namespace Puma

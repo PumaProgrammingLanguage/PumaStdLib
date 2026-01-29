@@ -7,14 +7,9 @@
 namespace Puma {
 namespace File
 {
-	Text::Text() noexcept
-		: handle(nullptr)
-	{
-	}
-
 	// Open file at path with mode (default is READ_WRITE)
 	Text::Text(const Types::String& path, OpenMode mode) noexcept
-		: handle(nullptr)
+		: handle(nullptr), adjustPosition(false)
 	{
 		open(path, mode);
 	}
@@ -40,34 +35,39 @@ namespace File
 	// Opens the file at path with mode (default is READ_WRITE)
 	bool Text::open(const Types::String& path, OpenMode mode) noexcept
 	{
-		if (path.SizeStr() == 0)
+		if (path.Size() == 0)
 		{
 			return false;
 		}
 
 		close();
 
-		std::string native(path.BeginConst(), path.EndConst());
+		std::string native(path.First(), path.Last());
 		std::replace(native.begin(), native.end(), '/', '\\');
 
 		const char* modeString = nullptr;
 		switch (mode)
 		{
 		case OpenMode::READ:
-			// Open for reading
+			// Open for reading (starting at beginning of file)
 			modeString = "r";
 			break;
 		case OpenMode::WRITE:
 			// Open for writing at end of file (appending or creating)
 			modeString = "a";
 			break;
-		case OpenMode::WRITE_REPLACE:
-			// Open for writing (overwriting existing file)
+		case OpenMode::WRITE_NEW:
+			// Open for writing at beginning of file (replacing existing file)
 			modeString = "w";
 			break;
 		case OpenMode::READ_WRITE:
 			// Open for reading and writing at end of file (appending or creating)
 			modeString = "a+";
+			adjustPosition = true;
+			break;
+		case OpenMode::READ_WRITE_NEW:
+			// Open for reading and writing at beginning of file (replacing existing file)
+			modeString = "w+";
 			break;
 		default:
 			return false;
@@ -149,20 +149,38 @@ namespace File
 			return false;
 		}
 
-		const std::uint32_t size = text.SizeStr();
+		const std::uint32_t size = text.Size();
 		if (size == 0)
 		{
 			return true;
 		}
 
-		const std::size_t written = std::fwrite(text.BeginConst(), sizeof(char), size, handle);
+		const std::size_t written = std::fwrite(text.First(), sizeof(char), size, handle);
 		return written == size;
+	}
+
+	// Writes a single Charactor to the file
+	bool Text::Write(const Types::Charactor& ch) noexcept
+	{
+		// Convert Charactor to a one-character String and reuse existing Write
+		return Write(ch.ToString());
 	}
 
 	// Writes text followed by a newline to the file
 	bool Text::WriteLn(const Types::String& text) noexcept
 	{
 		if (!Write(text))
+		{
+			return false;
+		}
+
+		return std::fputc('\n', handle) != EOF;
+	}
+
+	// Writes a single Charactor followed by a newline to the file
+	bool Text::WriteLn(const Types::Charactor& ch) noexcept
+	{
+		if (!Write(ch))
 		{
 			return false;
 		}
