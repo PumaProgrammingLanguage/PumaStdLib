@@ -43,7 +43,7 @@ namespace Console
     // Writes a Puma String to standard output
     void Write(const Types::String& str) noexcept
     {
-        const std::uint32_t strSize = str.SizeStr();
+        const std::uint32_t strSize = str.Size();
 
         if (strSize == 0)
         {
@@ -52,7 +52,7 @@ namespace Console
         }
 
         // Write the string bytes to stdout (no null terminator needed)
-        std::cout.write(str.BeginConst(), strSize);
+        std::cout.write(str.First(), strSize);
     }
 
     // Writes a C-string to standard output
@@ -66,12 +66,19 @@ namespace Console
         Write(Types::String(cstr, std::strlen(cstr)));
     }
 
+    // Writes a single Puma Charactor to standard output
+    void Write(const Types::Charactor& ch) noexcept
+    {
+        const Types::String tmp = ch.ToString();
+        Write(tmp);
+    }
+
     // Writes a Puma String to standard output followed by a newline
     void WriteLn(const Types::String& str) noexcept
     {
         Write(str);
 		// Add newline, does not flush
-        std::cout << '\n';
+        Write("\n");
     }
 
     // Writes a C-string to standard output followed by a newline
@@ -83,6 +90,13 @@ namespace Console
         }
 
         WriteLn(Types::String(cstr, std::strlen(cstr)));
+    }
+
+    // Writes a single Puma Charactor followed by a newline
+    void WriteLn(const Types::Charactor& ch) noexcept
+    {
+        Write(ch);
+        Write("\n");
     }
 
     void Flush() noexcept

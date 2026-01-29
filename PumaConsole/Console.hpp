@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../PumaTypes/String.hpp"
+#include "../PumaTypes/Charactor.hpp"
 
 namespace Puma {
 namespace Console
@@ -17,11 +18,17 @@ namespace Console
 	// Writes a C-string to standard output
 	void Write(const char* cstr) noexcept;
 
+    // Writes a single Puma Charactor to standard output
+    void Write(const Types::Charactor& ch) noexcept;
+
     // Writes a Puma String to standard output followed by a newline
     void WriteLn(const Types::String& str) noexcept;
 
 	// Writes a C-string to standard output followed by a newline
 	void WriteLn(const char* cstr) noexcept;
+
+    // Writes a single Puma Charactor followed by a newline
+    void WriteLn(const Types::Charactor& ch) noexcept;
 
     // Flushes the standard output buffer
     void Flush() noexcept;
