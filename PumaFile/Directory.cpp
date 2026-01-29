@@ -31,14 +31,14 @@ namespace File
 		// Set current working directory - normalized to forward slashes
 		static bool SetCurrentDirectory(const Types::String& path) noexcept
 		{
-			const std::uint32_t pathSize = path.SizeStr();
+			const std::uint32_t pathSize = path.Size();
 			// Empty path is invalid
 			if (pathSize == 0)
 			{
 				return false;
 			}
 			// All modern day OSes support forward slashes, so normalize for portable code
-			std::string normalizedPath(path.BeginConst(), path.EndConst());
+			std::string normalizedPath(path.First(), path.Last());
 			std::replace(normalizedPath.begin(), normalizedPath.end(), '\\', '/');
 			// Set current path
 			std::error_code ec;
