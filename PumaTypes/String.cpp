@@ -52,11 +52,11 @@ namespace Types
 			longStr.tag = LONG_MASK;
 			longStr.strSize = static_cast<uint32_t>(dataSize);
 
-			uint8_t* buf = new (nothrow) uint8_t[dataSize];
+			char* buf = new (nothrow) char[dataSize];
 			if (buf != nullptr)
 			{
 				memcpy(buf, data, dataSize);
-				longStr.ptr = buf;
+				longStr.ptr = reinterpret_cast<const uint8_t*>(buf);
 			}
 			else
 			{
@@ -282,20 +282,13 @@ namespace Types
 	// Iterator support: move to the previous code unit (not code point).
 	const uint8_t* String::Previous(const uint8_t* current) const noexcept
 	{
-		// Not started yet: position at the last character.
+		// Not started yet
 		if (current == nullptr)
 		{
 			return nullptr;
 		}
 
 		const uint8_t* first = First();
-		const uint8_t* last  = Last();
-
-		// Empty or invalid buffer.
-		if (last == nullptr)
-		{
-			return nullptr;
-		}
 
 		const uint8_t* p = current; // scanning pointer
 		// Walk backwards until we find the leading byte of the previous UTF‑8 code point.

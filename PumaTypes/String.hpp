@@ -27,18 +27,18 @@ namespace Types
         void FromString(const String& source) noexcept;
 
         // Public API
-		// get str length - length in characters (code points)
-		uint32_t Length() const noexcept;
-		// get str size - length in bytes
+        // get str length - length in characters (code points)
+        uint32_t Length() const noexcept;
+        // get str size - length in bytes
         uint32_t Size() const noexcept;
-		// get variable size - number of bytes used to store the variable
+        // get variable size - number of bytes used to store the variable
         uint32_t SizeVar() const noexcept;
 
-		// iterator range support - returns pointer to a UTF-8 code unit
-		const uint8_t* First() const noexcept;
-		const uint8_t* Last() const noexcept;
-		const uint8_t* Next(const uint8_t* current) const noexcept;
-		const uint8_t* Previous(const uint8_t* current) const noexcept;
+        // iterator range support - returns pointer to a UTF-8 code unit
+        const uint8_t* First() const noexcept;
+        const uint8_t* Last() const noexcept;
+        const uint8_t* Next(const uint8_t* current) const noexcept;
+        const uint8_t* Previous(const uint8_t* current) const noexcept;
 
     private:
         // Layout (private)
@@ -51,7 +51,7 @@ namespace Types
     #else
     #error Unsupported pointer size
     #endif
-		// copy or zero the union
+        // copy or zero the union
         struct { uint64_t firstHalf; uint64_t secondHalf; } packedValues;
 
         // Masks (private) - UPPER_CASE
