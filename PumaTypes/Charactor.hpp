@@ -15,7 +15,7 @@ namespace Types
 		// Lifetime
 		Charactor() noexcept;
 		Charactor(const Charactor& source) noexcept;
-		Charactor(const std::uint8_t* data, std::uint32_t dataSize) noexcept;
+		Charactor(const uint8_t* data, uint32_t dataSize) noexcept;
 		Charactor(const char* data, size_t dataSize) noexcept;
 		~Charactor() noexcept;
 
@@ -27,13 +27,13 @@ namespace Types
 
 		// Returns the number of bytes in the UTF‑8 code unit sequence starting with 'c'.
 		// Invalid leading bytes and continuation bytes return 1.
-		static std::uint8_t GetCharSize(const std::uint8_t c) noexcept;
+		static uint8_t GetCharSize(const uint8_t c) noexcept;
 
 	private:
 		// Raw 4-byte representation (e.g., UTF-8 bytes)
-		std::uint8_t codeUnits[4];
+		uint8_t codeUnits[4];
 		// Packed 32-bit representation of the same 4 bytes
-		std::uint32_t packedValue;
+		uint32_t packedValue;
 	};
 } // namespace Types
 } // namespace Puma

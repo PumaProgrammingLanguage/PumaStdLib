@@ -12,7 +12,6 @@ namespace Types
 
 	// Default-constructs an empty String (no heap allocation).
 	String::String() noexcept
-		: m_currentConst(nullptr)
 	{
 		// Zero the packed storage so that all views (short/long) are in a valid empty state.
 		packedValues.firstHalf = 0;
@@ -20,14 +19,14 @@ namespace Types
 	}
 
 	// Constructs a String from raw UTF‑8 bytes and explicit length in bytes.
-	String::String(const char* data, std::size_t dataSize) noexcept
-		: String(reinterpret_cast<const std::uint8_t*>(data), static_cast<std::uint32_t>(dataSize))
+	String::String(const char* data, size_t dataSize) noexcept
+		: String(reinterpret_cast<const uint8_t*>(data), static_cast<uint32_t>(dataSize))
 	{
 		// delegation is handled in the initializer list.
 	}
 
 	// Constructs a String from raw UTF‑8 bytes and explicit length in bytes.
-	String::String(const std::uint8_t* data, std::uint32_t dataSize) noexcept
+	String::String(const uint8_t* data, uint32_t dataSize) noexcept
 		: String()
 	{
 		// Treat null data or zero length as empty string.
@@ -40,7 +39,7 @@ namespace Types
 		if (dataSize <= sizeof(shortStr.codeUnits))
 		{
 			// Short string: store bytes inline in the union.
-			shortStr.tag = static_cast<std::uint8_t>(dataSize & LENGTH_MASK);
+			shortStr.tag = static_cast<uint8_t>(dataSize & LENGTH_MASK);
 			if (dataSize > 0)
 			{
 				memcpy(shortStr.codeUnits, data, dataSize);
@@ -51,9 +50,9 @@ namespace Types
 		{
 			// Long string: allocate buffer on the heap.
 			longStr.tag = LONG_MASK;
-			longStr.strSize = static_cast<std::uint32_t>(dataSize);
+			longStr.strSize = static_cast<uint32_t>(dataSize);
 
-			char* buf = new (std::nothrow) char[dataSize];
+			uint8_t* buf = new (nothrow) uint8_t[dataSize];
 			if (buf != nullptr)
 			{
 				memcpy(buf, data, dataSize);
@@ -72,7 +71,7 @@ namespace Types
 	String::String(const String& source) noexcept
 		: String()
 	{
-		fromString(source);
+		FromString(source);
 	}
 
 	// Destructor: releases heap storage for long strings.
@@ -90,7 +89,7 @@ namespace Types
 			return *this;
 		}
 
-		fromString(source);
+		FromString(source);
 		return *this;
 	}
 
@@ -107,10 +106,10 @@ namespace Types
     }
 
     // Returns the number of Unicode code points in the string (UTF-8 aware).
-    std::uint32_t String::Length() const noexcept
+    uint32_t String::Length() const noexcept
     {
-		std::uint32_t charCount = 0;
-        const char* ptr;
+		uint32_t charCount = 0;
+        const uint8_t* ptr;
 
 		// Select the underlying UTF-8 buffer.
         if (isShort())
@@ -122,13 +121,13 @@ namespace Types
             ptr = longStr.ptr;
 		}
 
-		const std::uint32_t strSize = Size();
+		const uint32_t strSize = Size();
 
 		// Walk the UTF-8 sequence using Charactor's length helper.
-		for (std::uint32_t i = 0; i < strSize; )
+		for (uint32_t i = 0; i < strSize; )
 		{
-			const std::uint8_t c = static_cast<std::uint8_t>(ptr[i]);
-			const std::uint8_t charSize = Charactor::GetCharSize(c);
+			const uint8_t c = static_cast<uint8_t>(ptr[i]);
+			const uint8_t charSize = Charactor::GetCharSize(c);
 
 			// Advance by one full code point (1–4 bytes).
 			i += charSize;
@@ -139,21 +138,21 @@ namespace Types
 	}
 
 	// Returns the number of bytes occupied by the UTF-8 sequence (not including any terminator).
-    std::uint32_t String::Size() const noexcept
+    uint32_t String::Size() const noexcept
     {
         return isShort()
-            ? static_cast<std::uint32_t>(shortStr.tag & LENGTH_MASK)
-            : static_cast<std::uint32_t>(longStr.strSize);
+            ? static_cast<uint32_t>(shortStr.tag & LENGTH_MASK)
+            : static_cast<uint32_t>(longStr.strSize);
     }
 
 	// Returns the size of the String object itself.
-    std::uint32_t String::SizeVar() const noexcept
+    uint32_t String::SizeVar() const noexcept
     {
         return sizeof(String);
 	}
 
 	// Returns a pointer to the underlying UTF-8 bytes.
-	const char* String::codeUnits() const noexcept
+	const uint8_t* String::codeUnits() const noexcept
 	{
 		return isShort() ? shortStr.codeUnits : longStr.ptr;
 	}
@@ -168,35 +167,32 @@ namespace Types
 
 		packedValues.firstHalf = 0;
 		packedValues.secondHalf = 0;
-		m_currentConst = nullptr;
 	}
 
 	// Deep-copy from another String instance.
-	void String::fromString(const String& source) noexcept
+	void String::FromString(const String& source) noexcept
 	{
 		// Short representation: copy the entire packed union.
 		if (source.isShort())
 		{
 			packedValues.firstHalf  = source.packedValues.firstHalf;
 			packedValues.secondHalf = source.packedValues.secondHalf;
-			m_currentConst = nullptr;
 			return;
 		}
 
 		// Long representation: copy heap storage if present.
 		if (source.longStr.ptr != nullptr)
 		{
-			const std::size_t bufferSize = static_cast<std::size_t>(source.longStr.strSize);
+			const size_t bufferSize = static_cast<size_t>(source.longStr.strSize);
 			if (bufferSize > 0)
 			{
-				char* buffer = new (std::nothrow) char[bufferSize];
+				uint8_t* buffer = new (nothrow) uint8_t[bufferSize];
 				if (buffer != nullptr)
 				{
 					memcpy_s(buffer, bufferSize, source.longStr.ptr, bufferSize);
 					longStr.tag     = source.longStr.tag;
-					longStr.strSize = static_cast<std::uint32_t>(bufferSize);
+					longStr.strSize = static_cast<uint32_t>(bufferSize);
 					longStr.ptr     = buffer;
-					m_currentConst  = nullptr;
 					return;
 				}
 			}
@@ -207,7 +203,6 @@ namespace Types
 		// If we reach here, copy failed: reset to empty.
 		packedValues.firstHalf = 0;
 		packedValues.secondHalf = 0;
-		m_currentConst = nullptr;
 	}
 
 	// Returns a copy of this String (convenience method).
@@ -217,31 +212,30 @@ namespace Types
 	}
 
 	// Iterator support: Set to first code point.
-	const char* String::First() const noexcept
+	const uint8_t* String::First() const noexcept
 	{
-		m_currentConst = codeUnits();
-		return m_currentConst;
+		return codeUnits();
 	}
 
 	// Iterator support: one‑past‑the‑last code unit pointer.
-	const char* String::Last() const noexcept
+	const uint8_t* String::Last() const noexcept
 	{
-	    const char* first = First();
-	    const std::uint32_t size = Size();
+	    const uint8_t* first = First();
+	    const uint32_t size = Size();
 
-	    // Empty or invalid buffer.
-	    if (first == nullptr || size == 0)
+	    // check for empty
+	    if (size == 0)
 	    {
 	        return nullptr;
 	    }
 
-	    const char* p = first + size; // one beyond last byte of the string
+	    const uint8_t* p = first + size; // one beyond last byte of the string
 
 	    // Walk backwards until we find the leading byte of the last UTF‑8 code point.
 	    while (p > first)
 	    {
 	        --p;
-	        const std::uint8_t byte = static_cast<std::uint8_t>(*p);
+	        const uint8_t byte = static_cast<uint8_t>(*p);
 
 	        // UTF‑8 continuation bytes have the form 10xxxxxx (0x80–0xBF).
 	        // Leading bytes are anything that is NOT a continuation byte.
@@ -251,82 +245,64 @@ namespace Types
 	        }
 	    }
 
-	    // If we fall through, the first byte is the start (or data is malformed).
+	    // If we fall through, data is malformed).
 	    return nullptr;
 	}
 
 	// Iterator support: advance to the next code unit (not code point).
-	const char* String::Next() const noexcept
+	const uint8_t* String::Next(const uint8_t* current) const noexcept
 	{
 		// Not started yet
-		if (m_currentConst == nullptr)
+		if (current == nullptr)
 		{
 			return nullptr;
 		}
 
-		const char* first = First();
-		const char* last   = Last();
+		const uint8_t* first = First();
+		const uint8_t* last  = Last();
 
-		// Empty or invalid buffer.
-		if (first == nullptr || last == nullptr)
+		// check for empty
+		if (last == nullptr)
 		{
-			m_currentConst = nullptr;
-			return nullptr;
-		}
-
-		// Out‑of‑range iterator state.
-		if (m_currentConst < first || m_currentConst > last)
-		{
-			m_currentConst = nullptr;
 			return nullptr;
 		}
 
 		// Move one UTF-8 code point forward.
-		const std::uint8_t c = static_cast<std::uint8_t>(*m_currentConst);
-		const std::uint8_t charSize = Charactor::GetCharSize(c);
-		const char* next = m_currentConst + charSize;
+		const uint8_t c = static_cast<uint8_t>(*current);
+		const uint8_t charSize = Charactor::GetCharSize(c);
+		const uint8_t* next = current + charSize;
 		if (next > last)
 		{
-			m_currentConst = nullptr;
 			return nullptr;
 		}
 
-		m_currentConst = next;
-		return m_currentConst;
+		return next;
 	}
 
 	// Iterator support: move to the previous code unit (not code point).
-	const char* String::Previous() const noexcept
+	const uint8_t* String::Previous(const uint8_t* current) const noexcept
 	{
 		// Not started yet: position at the last character.
-		if (m_currentConst == nullptr)
+		if (current == nullptr)
 		{
 			return nullptr;
 		}
 
-		const char* first = First();
-		const char* last  = Last();
+		const uint8_t* first = First();
+		const uint8_t* last  = Last();
 
 		// Empty or invalid buffer.
-		if (first == nullptr || last == nullptr)
+		if (last == nullptr)
 		{
-			m_currentConst = nullptr;
 			return nullptr;
 		}
 
-		// Out‑of‑range iterator state.
-		if (m_currentConst < first || m_currentConst > last)
-		{
-			m_currentConst = nullptr;
-			return nullptr;
-		}
-
-		const char* p = m_currentConst; // scanning pointer
+		const uint8_t* p = current; // scanning pointer
 		// Walk backwards until we find the leading byte of the previous UTF‑8 code point.
 		while (p > first)
 		{
 			--p;
-			const std::uint8_t byte = static_cast<std::uint8_t>(*p);
+			const uint8_t byte = static_cast<uint8_t>(*p);
 
 			// UTF‑8 continuation bytes have the form 10xxxxxx (0x80–0xBF).
 			// Leading bytes are anything that is NOT a continuation byte.
@@ -335,7 +311,7 @@ namespace Types
 				return p; // start of previous character
 			}
 		}
-
+		 
 		// If we fall through, the first byte of the previous code point is malformed).
 		return nullptr;
 	}

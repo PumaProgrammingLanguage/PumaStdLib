@@ -9,7 +9,7 @@ namespace Types
 {
 	namespace
 	{
-		constexpr std::uint8_t UTF8CharSizeLookup[32] =
+		constexpr uint8_t UTF8CharSizeLookup[32] =
 		{
 			1, 1, 1, 1, 1, 1, 1, 1,
 			1, 1, 1, 1, 1, 1, 1, 1,
@@ -31,12 +31,12 @@ namespace Types
 	{
 	}
 
-	Charactor::Charactor(const char* data, std::size_t dataSize) noexcept
-		: Charactor(reinterpret_cast<const std::uint8_t*>(data), static_cast<std::uint32_t>(dataSize))
+	Charactor::Charactor(const char* data, size_t dataSize) noexcept
+		: Charactor(reinterpret_cast<const uint8_t*>(data), static_cast<uint32_t>(dataSize))
 	{
 	}
 
-	Charactor::Charactor(const std::uint8_t* data, std::uint32_t dataSize) noexcept
+	Charactor::Charactor(const uint8_t* data, uint32_t dataSize) noexcept
 	: packedValue(0U)
 	{
 		if (data == nullptr || dataSize == 0)
@@ -44,7 +44,7 @@ namespace Types
 			return;
 		}
 
-		const std::uint8_t charSize = GetCharSize(data[0]); // 1..4
+		const uint8_t charSize = GetCharSize(data[0]); // 1..4
 
 		if (charSize > dataSize)
 		{
@@ -69,11 +69,11 @@ namespace Types
 
 	Types::String Charactor::ToString() const noexcept
 	{
-		const std::uint8_t charSize = GetCharSize(codeUnits[0]); // 1..4
+		const uint8_t charSize = GetCharSize(codeUnits[0]); // 1..4
 		return String(codeUnits, charSize);
 	}
 
-	std::uint8_t Charactor::GetCharSize(const std::uint8_t c) noexcept
+	uint8_t Charactor::GetCharSize(const uint8_t c) noexcept
 	{
 		return UTF8CharSizeLookup[c >> 3];
 	}

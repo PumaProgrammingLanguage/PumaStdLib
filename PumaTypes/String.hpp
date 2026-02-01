@@ -6,6 +6,8 @@
 #include <cstring>
 #include <new>
 
+using namespace std;
+
 namespace Puma {
 namespace Types
 {
@@ -16,59 +18,55 @@ namespace Types
         // Lifetime
         String() noexcept;
         String(const String& source) noexcept;
-        String(const std::uint8_t* data, std::uint32_t dataSize) noexcept;
-        String(const char* data, std::size_t dataSize) noexcept;
+        String(const uint8_t* data, uint32_t dataSize) noexcept;
+        String(const char* data, size_t dataSize) noexcept;
         ~String() noexcept;
 
         String& operator=(const String& source) noexcept;
         String ToString() const noexcept;
+        void FromString(const String& source) noexcept;
 
         // Public API
 		// get str length - length in characters (code points)
-		std::uint32_t Length() const noexcept;
+		uint32_t Length() const noexcept;
 		// get str size - length in bytes
-        std::uint32_t Size() const noexcept;
+        uint32_t Size() const noexcept;
 		// get variable size - number of bytes used to store the variable
-        std::uint32_t SizeVar() const noexcept;
+        uint32_t SizeVar() const noexcept;
 
-		// iterator range support
-		const char* First() const noexcept;
-		const char* Last() const noexcept;
-		const char* Next() const noexcept;
-		const char* Previous() const noexcept;
+		// iterator range support - returns pointer to a UTF-8 code unit
+		const uint8_t* First() const noexcept;
+		const uint8_t* Last() const noexcept;
+		const uint8_t* Next(const uint8_t* current) const noexcept;
+		const uint8_t* Previous(const uint8_t* current) const noexcept;
 
     private:
         // Layout (private)
-        struct { std::uint8_t tag; char codeUnits[15]; } shortStr;
+        struct { uint8_t tag; uint8_t codeUnits[15]; } shortStr;
 
     #if INTPTR_MAX == INT64_MAX
-        struct { std::uint8_t tag; std::uint8_t reserved[3]; std::uint32_t strSize; const char* ptr; } longStr;
+        struct { uint8_t tag; uint8_t reserved[3]; uint32_t strSize; const uint8_t* ptr; } longStr;
     #elif INTPTR_MAX == INT32_MAX
-        struct { std::uint8_t tag; std::uint8_t reserved[3]; std::uint32_t strSize; std::uint32_t reserved2; const char* ptr; } longStr;
+        struct { uint8_t tag; uint8_t reserved[3]; uint32_t strSize; uint32_t reserved2; const uint8_t* ptr; } longStr;
     #else
     #error Unsupported pointer size
     #endif
 		// copy or zero the union
-        struct { std::uint64_t firstHalf; std::uint64_t secondHalf; } packedValues;
+        struct { uint64_t firstHalf; uint64_t secondHalf; } packedValues;
 
         // Masks (private) - UPPER_CASE
-        static constexpr std::uint8_t SHORT_MASK  = 0x80;
-        static constexpr std::uint8_t LENGTH_MASK = 0x0F;
-        static constexpr std::uint8_t LONG_MASK   = 0x80;
+        static constexpr uint8_t SHORT_MASK  = 0x80;
+        static constexpr uint8_t LENGTH_MASK = 0x0F;
+        static constexpr uint8_t LONG_MASK   = 0x80;
 
         // get pointer to string codeUnits
-        const char* codeUnits() const noexcept;
+        const uint8_t* codeUnits() const noexcept;
 
         // Helpers (private) - lowerCamelCase
         bool isShort() const noexcept;
         bool isLong()  const noexcept;
 
         void release() noexcept;
-
-        void fromString(const String& source) noexcept;
-
-        // iterator state
-        mutable const char* m_currentConst;
     };
 #pragma pack(pop)
 
