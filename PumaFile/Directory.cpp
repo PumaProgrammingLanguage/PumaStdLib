@@ -5,6 +5,8 @@
 #include <string>
 #include <algorithm>
 
+using namespace std;
+
 namespace Puma {
 namespace File
 {
@@ -13,8 +15,8 @@ namespace File
 		// Get current working directory - normalized to forward slashes
 		Types::String GetCurrentDirectory() noexcept
 		{
-			std::error_code ec;
-			const std::filesystem::path path = std::filesystem::current_path(ec);
+			error_code ec;
+			const filesystem::path path = filesystem::current_path(ec);
 			// On error, return empty string
 			if (ec)
 			{
@@ -22,8 +24,8 @@ namespace File
 			}
 
 			// Normalize to forward slashes - Puma does not support backslashes
-			std::string normalizedPath = path.string();
-			std::replace(normalizedPath.begin(), normalizedPath.end(), '\\', '/');
+			string normalizedPath = path.string();
+			replace(normalizedPath.begin(), normalizedPath.end(), '\\', '/');
 			// Return as Types::String
 			return Types::String(normalizedPath.data(), normalizedPath.size());
 		}
@@ -31,18 +33,18 @@ namespace File
 		// Set current working directory - normalized to forward slashes
 		static bool SetCurrentDirectory(const Types::String& path) noexcept
 		{
-			const std::uint32_t pathSize = path.Size();
+			const uint32_t pathSize = path.Size();
 			// Empty path is invalid
 			if (pathSize == 0)
 			{
 				return false;
 			}
 			// All modern day OSes support forward slashes, so normalize for portable code
-			std::string normalizedPath(path.First(), path.Last());
-			std::replace(normalizedPath.begin(), normalizedPath.end(), '\\', '/');
+			string normalizedPath(path.First(), path.Last());
+			replace(normalizedPath.begin(), normalizedPath.end(), '\\', '/');
 			// Set current path
-			std::error_code ec;
-			std::filesystem::current_path(normalizedPath, ec);
+			error_code ec;
+			filesystem::current_path(normalizedPath, ec);
 			// Return success status
 			return !ec;
 		}
