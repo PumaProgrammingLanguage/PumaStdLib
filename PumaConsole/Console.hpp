@@ -15,7 +15,10 @@ namespace Console
     // Writes a Puma String to standard output
     void Write(const Types::String& str) noexcept;
 
-	// Writes a C-string to standard output
+    // Writes a uint8_t string to standard output
+    void Write(const uint8_t* cstr) noexcept;
+
+    // Writes a C-string to standard output
 	void Write(const char* cstr) noexcept;
 
     // Writes a single Puma Charactor to standard output

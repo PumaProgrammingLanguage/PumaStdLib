@@ -14,6 +14,8 @@ namespace
 }
 #endif
 
+using namespace std;
+
 namespace Puma {
 namespace Console
 {
@@ -43,7 +45,7 @@ namespace Console
     // Writes a Puma String to standard output
     void Write(const Types::String& str) noexcept
     {
-        const std::uint32_t strSize = str.Size();
+        const uint32_t strSize = str.Size();
 
         if (strSize == 0)
         {
@@ -52,7 +54,19 @@ namespace Console
         }
 
         // Write the string bytes to stdout (no null terminator needed)
-        std::cout.write(str.First(), strSize);
+        cout.write(reinterpret_cast<const char*>(str.First()), strSize);
+    }
+
+    // Writes a uint8_t string to standard output
+    void Write(const uint8_t* str, const uint32_t size) noexcept
+    {
+        if (str == nullptr || size == 0)
+        {
+            return;
+        }
+
+        // Write the string bytes to stdout (no null terminator needed)
+        cout.write(reinterpret_cast<const char*>(str), size);
     }
 
     // Writes a C-string to standard output
@@ -63,7 +77,8 @@ namespace Console
             return;
         }
 
-        Write(Types::String(cstr, std::strlen(cstr)));
+        // Write the string bytes to stdout (no null terminator needed)
+        cout.write(cstr, strlen(cstr));
     }
 
     // Writes a single Puma Charactor to standard output
@@ -89,7 +104,7 @@ namespace Console
             return;
         }
 
-        WriteLn(Types::String(cstr, std::strlen(cstr)));
+        WriteLn(Types::String(cstr, strlen(cstr)));
     }
 
     // Writes a single Puma Charactor followed by a newline
@@ -101,16 +116,16 @@ namespace Console
 
     void Flush() noexcept
     {
-        std::cout.flush();
+        cout.flush();
     }
 
     // Reads the next whitespace-delimited token from standard input
     Types::String Read() noexcept
     {
-        std::string buffer;
-        if (!(std::cin >> buffer))
+        string buffer;
+        if (!(cin >> buffer))
         {
-            std::cin.clear();
+            cin.clear();
             return Types::String();
         }
 
@@ -120,10 +135,10 @@ namespace Console
     // Reads the next line from standard input (newline excluded)
     Types::String ReadLn() noexcept
     {
-        std::string buffer;
-        if (!std::getline(std::cin, buffer))
+        string buffer;
+        if (!getline(cin, buffer))
         {
-            std::cin.clear();
+            cin.clear();
             return Types::String();
         }
 
@@ -143,7 +158,7 @@ namespace Console
         SetConsoleOutputCP(CP_UTF8);
         SetConsoleCP(CP_UTF8);
 #endif
-        std::ios::sync_with_stdio(false);
+        ios::sync_with_stdio(false);
 
         // Show command prompt
 		m_visible = true;
