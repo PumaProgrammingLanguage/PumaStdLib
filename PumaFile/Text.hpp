@@ -11,7 +11,7 @@ namespace File
 	class Text final
 	{
 	public:
-		enum class OpenMode : std::uint8_t
+		enum class OpenMode : uint8_t
 		{
 			// Open for reading
 			READ,
@@ -54,7 +54,7 @@ namespace File
 		// Closes the file if open
 		void close() noexcept;
 
-		std::FILE* handle;
+		FILE* handle;
 		bool adjustPosition;
 	};
 } // namespace File

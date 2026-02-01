@@ -42,8 +42,8 @@ namespace File
 
 		close();
 
-		std::string native(path.First(), path.Last());
-		std::replace(native.begin(), native.end(), '/', '\\');
+		string native(path.First(), path.Last());
+		replace(native.begin(), native.end(), '/', '\\');
 
 		const char* modeString = nullptr;
 		switch (mode)
@@ -83,7 +83,7 @@ namespace File
 		}
 #else
 		// Use fopen on other compilers
-		handle = std::fopen(native.c_str(), modeString);
+		handle = fopen(native.c_str(), modeString);
 #endif
 
 		return handle != nullptr;
@@ -100,7 +100,7 @@ namespace File
 	{
 		if (handle != nullptr)
 		{
-			std::string result;
+			string result;
 			char buffer[1024];
 #if defined(_MSC_VER)
 			if (fscanf_s(handle, "%1023s", buffer, static_cast<unsigned int>(sizeof(buffer))) == 1)
@@ -125,9 +125,9 @@ namespace File
 	{
 		if (handle != nullptr)
 		{
-			std::string result;
+			string result;
 			char buffer[1024];
-			while (std::fgets(buffer, sizeof(buffer), handle) != nullptr)
+			while (fgets(buffer, sizeof(buffer), handle) != nullptr)
 			{
 				result += buffer;
 			}
@@ -149,13 +149,13 @@ namespace File
 			return false;
 		}
 
-		const std::uint32_t size = text.Size();
+		const uint32_t size = text.Size();
 		if (size == 0)
 		{
 			return true;
 		}
 
-		const std::size_t written = std::fwrite(text.First(), sizeof(char), size, handle);
+		const size_t written = fwrite(text.First(), sizeof(char), size, handle);
 		return written == size;
 	}
 
@@ -174,7 +174,7 @@ namespace File
 			return false;
 		}
 
-		return std::fputc('\n', handle) != EOF;
+		return fputc('\n', handle) != EOF;
 	}
 
 	// Writes a single Charactor followed by a newline to the file
@@ -185,7 +185,7 @@ namespace File
 			return false;
 		}
 
-		return std::fputc('\n', handle) != EOF;
+		return fputc('\n', handle) != EOF;
 	}
 
 } // namespace File
