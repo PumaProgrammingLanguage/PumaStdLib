@@ -15,8 +15,7 @@ namespace Types
 		// Lifetime
 		Charactor() noexcept;
 		Charactor(const Charactor& source) noexcept;
-		Charactor(const uint8_t* data, uint32_t dataSize) noexcept;
-		Charactor(const char* data, size_t dataSize) noexcept;
+		Charactor(const uint8_t* data) noexcept;
 		~Charactor() noexcept;
 
 		// Assignment
@@ -24,6 +23,9 @@ namespace Types
 
 		// Convert this UTF-8 character into a Puma String.
 		String ToString() const noexcept;
+
+		// Get pointer to the UTF-8 code unit.
+		uint8_t* ToUTF8() const noexcept;
 
 		// Returns the number of bytes in the UTF‑8 code unit sequence starting with 'c'.
 		// Invalid leading bytes and continuation bytes return 1.

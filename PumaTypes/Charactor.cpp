@@ -31,26 +31,15 @@ namespace Types
 	{
 	}
 
-	Charactor::Charactor(const char* data, size_t dataSize) noexcept
-		: Charactor(reinterpret_cast<const uint8_t*>(data), static_cast<uint32_t>(dataSize))
-	{
-	}
-
-	Charactor::Charactor(const uint8_t* data, uint32_t dataSize) noexcept
+	Charactor::Charactor(const uint8_t* data) noexcept
 	: packedValue(0U)
 	{
-		if (data == nullptr || dataSize == 0)
+		if (data == nullptr)
 		{
 			return;
 		}
 
 		const uint8_t charSize = GetCharSize(data[0]); // 1..4
-
-		if (charSize > dataSize)
-		{
-			// Invalid charSize, treat as empty character.
-			return;
-		}
 
 		// Copy up to 4 bytes
 		memcpy_s(codeUnits, sizeof(codeUnits), data, charSize);
@@ -71,6 +60,11 @@ namespace Types
 	{
 		const uint8_t charSize = GetCharSize(codeUnits[0]); // 1..4
 		return String(codeUnits, charSize);
+	}
+
+	uint8_t* Charactor::ToUTF8() const noexcept
+	{
+		return (uint8_t*)codeUnits;
 	}
 
 	uint8_t Charactor::GetCharSize(const uint8_t c) noexcept

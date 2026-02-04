@@ -9,19 +9,19 @@ namespace Types
 
     // Default constructor - creates an invalid iterator
     StringIterator::StringIterator() noexcept
-        : _string(nullptr), _current(nullptr)
+        : utf8(nullptr)
     {
     }
 
     // Constructor with String and position
-    StringIterator::StringIterator(const String* str, const uint8_t* ptr) noexcept
-        : _string(str), _current(ptr)
+    StringIterator::StringIterator(const uint8_t* ptr) noexcept
+        : utf8(ptr)
     {
     }
 
     // Copy constructor
     StringIterator::StringIterator(const StringIterator& other) noexcept
-        : _string(other._string), _current(other._current)
+        : utf8(other.utf8)
     {
     }
 
@@ -30,8 +30,7 @@ namespace Types
     {
         if (this != &other)
         {
-            _string = other._string;
-            _current = other._current;
+            utf8 = other.utf8;
         }
         return *this;
     }
@@ -39,74 +38,41 @@ namespace Types
     // Assign from pointer
     StringIterator& StringIterator::operator=(const uint8_t* ptr) noexcept
     {
-        _current = ptr;
+        utf8 = ptr;
+        return *this;
+    }
+
+	// Assign from Charactor
+    StringIterator& StringIterator::operator=(const Charactor& charactor) noexcept
+    {
+        utf8 = charactor.ToUTF8();
         return *this;
     }
 
     // Dereference operator - returns current position
-    const uint8_t* StringIterator::operator*() const noexcept
+    const Charactor StringIterator::operator*() const noexcept
     {
-        return _current;
-    }
-
-    // Arrow operator - returns current position
-    const uint8_t* StringIterator::operator->() const noexcept
-    {
-        return _current;
-    }
-
-    // Prefix increment - move to next code point
-    StringIterator& StringIterator::operator++() noexcept
-    {
-        if (_string != nullptr && _current != nullptr)
-        {
-            _current = _string->Next(_current);
-        }
-        return *this;
-    }
-
-    // Postfix increment - move to next code point
-    StringIterator StringIterator::operator++(int) noexcept
-    {
-        StringIterator temp(*this);
-        ++(*this);
-        return temp;
-    }
-
-    // Prefix decrement - move to previous code point
-    StringIterator& StringIterator::operator--() noexcept
-    {
-        if (_string != nullptr && _current != nullptr)
-        {
-            _current = _string->Previous(_current);
-        }
-        return *this;
-    }
-
-    // Postfix decrement - move to previous code point
-    StringIterator StringIterator::operator--(int) noexcept
-    {
-        StringIterator temp(*this);
-        --(*this);
-        return temp;
+		Charactor charactor(utf8);
+        return charactor;
     }
 
     // Equality comparison
     bool StringIterator::operator==(const StringIterator& other) const noexcept
     {
-        return _string == other._string && _current == other._current;
+        return utf8 == other.utf8;
     }
 
     // Inequality comparison
     bool StringIterator::operator!=(const StringIterator& other) const noexcept
     {
+		// Leverage equality operator above
         return !(*this == other);
     }
 
     // Check if iterator is valid
     bool StringIterator::IsValid() const noexcept
     {
-        return _string != nullptr && _current != nullptr;
+        return utf8 != nullptr;
     }
 
 } // namespace Types

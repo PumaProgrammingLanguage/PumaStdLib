@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Charactor.hpp"
 #include <cstdint>
 
 using namespace std;
@@ -15,24 +16,16 @@ namespace Types
     public:
         // Constructors
         StringIterator() noexcept;
-        StringIterator(const String* str, const uint8_t* ptr) noexcept;
+        StringIterator(const uint8_t* ptr) noexcept;
         StringIterator(const StringIterator& other) noexcept;
 
         // Assignment
         StringIterator& operator=(const StringIterator& other) noexcept;
         StringIterator& operator=(const uint8_t* ptr) noexcept;
+        StringIterator& operator=(const Charactor& charactor) noexcept;
 
         // Dereference - returns current UTF-8 code unit pointer
-        const uint8_t* operator*() const noexcept;
-        const uint8_t* operator->() const noexcept;
-
-        // Increment operators - move to next UTF-8 code point
-        StringIterator& operator++() noexcept;      // prefix
-        StringIterator operator++(int) noexcept;    // postfix
-
-        // Decrement operators - move to previous UTF-8 code point
-        StringIterator& operator--() noexcept;      // prefix
-        StringIterator operator--(int) noexcept;    // postfix
+        const Charactor operator*() const noexcept;
 
         // Comparison operators
         bool operator==(const StringIterator& other) const noexcept;
@@ -42,8 +35,7 @@ namespace Types
         bool IsValid() const noexcept;
 
     private:
-        const String* _string;
-        const uint8_t* _current;
+        const uint8_t* utf8;
     };
 
 } // namespace Types
