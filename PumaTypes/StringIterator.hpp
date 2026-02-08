@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Charactor.hpp"
+#include "String.hpp"
 #include <cstdint>
 
 using namespace std;
@@ -18,6 +19,8 @@ namespace Types
         StringIterator() noexcept;
         StringIterator(const uint8_t* current, const uint8_t* limit) noexcept;
         StringIterator(const StringIterator& other) noexcept;
+        // NEW: construct iterator over an entire String
+        explicit StringIterator(const String& str) noexcept;
 
         // Assignment
         StringIterator& operator=(const StringIterator& other) noexcept;
@@ -42,7 +45,7 @@ namespace Types
 
     private:
         const uint8_t* _current;
-		const uint8_t* _limit; // Optional: used to prevent going out of bounds
+        const uint8_t* _limit; // Optional: used to prevent going out of bounds
     };
 
 } // namespace Types

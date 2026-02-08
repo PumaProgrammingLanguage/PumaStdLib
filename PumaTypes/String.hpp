@@ -26,6 +26,7 @@ namespace Types
         String& operator=(const String& source) noexcept;
 
         String ToString() const noexcept;
+        const char* c_str() const noexcept;
         void FromString(const String& source) noexcept;
 
         // Public API
@@ -60,9 +61,6 @@ namespace Types
         static constexpr uint8_t SHORT_MASK  = 0x80;
         static constexpr uint8_t LENGTH_MASK = 0x0F;
         static constexpr uint8_t LONG_MASK   = 0x80;
-
-        // get pointer to string codeUnits
-        const uint8_t* codeUnits() const noexcept;
 
         // Helpers (private) - lowerCamelCase
         bool isShort() const noexcept;

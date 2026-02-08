@@ -42,7 +42,7 @@ namespace File
 
 		close();
 
-		string native(path.First(), path.Last());
+		string native(path.ToCString(), path.ToCString() + path.Size());
 		replace(native.begin(), native.end(), '/', '\\');
 
 		const char* modeString = nullptr;

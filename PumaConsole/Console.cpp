@@ -53,10 +53,8 @@ namespace Console
             return;
         }
 
-        // Fix: Get pointer from StringIterator
-        const Types::StringIterator first = str.First();
         // Add Ptr() method to StringIterator if not present
-        cout.write(reinterpret_cast<const char*>(first.Ptr()), strSize);
+        cout.write(reinterpret_cast<const char*>(str.ToCString()), strSize);
     }
 
     // Writes a uint8_t string to standard output

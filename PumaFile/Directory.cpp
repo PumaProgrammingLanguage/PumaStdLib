@@ -40,11 +40,11 @@ namespace File
 				return false;
 			}
 			// All modern day OSes support forward slashes, so normalize for portable code
-			string normalizedPath(path.First(), path.Last());
-			replace(normalizedPath.begin(), normalizedPath.end(), '\\', '/');
+			string native(path.ToCString(), path.ToCString() + path.Size());
+			replace(native.begin(), native.end(), '\\', '/');
 			// Set current path
 			error_code ec;
-			filesystem::current_path(normalizedPath, ec);
+			filesystem::current_path(native, ec);
 			// Return success status
 			return !ec;
 		}

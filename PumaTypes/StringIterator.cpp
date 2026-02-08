@@ -15,10 +15,17 @@ namespace Types
     {
     }
 
-    // Constructor with position (no limit known yet)
+    // Constructor with position and limit
     StringIterator::StringIterator(const uint8_t* current, const uint8_t* limit) noexcept
         : _current(current)
         , _limit(limit)
+    {
+    }
+
+    // NEW: construct iterator over an entire String
+    StringIterator::StringIterator(const String& str) noexcept
+        : _current(str.codeUnits())
+        , _limit(str.codeUnits() + str.Size())
     {
     }
 
@@ -58,12 +65,10 @@ namespace Types
     {
         if (!_current)
         {
-            return StringIterator(nullptr);
+            return StringIterator(nullptr, _limit);
         }
 
-        StringIterator result(*this);
-        result._current = _current + offset;
-        return result;
+        return StringIterator(_current + offset, _limit);
     }
 
     // Prefix increment - move forward one UTF-8 character
@@ -74,9 +79,7 @@ namespace Types
             const std::uint8_t firstByte = *_current;
             const std::uint8_t charSize  = Charactor::GetCharSize(firstByte);
             _current += charSize;
-
-            // Respect optional limit if set
-            if (_limit && _current >= _limit)
+            if (_limit && _current > _limit)
             {
                 _current = nullptr;
             }
@@ -95,9 +98,7 @@ namespace Types
         const uint8_t* p = _current;
 
         // Walk backwards until we find the leading byte of the previous UTF‑8 code point.
-        // NOTE: _limit is an end pointer; we don't know the begin explicitly here.
-        // Caller must ensure _current stays within a valid buffer.
-        while (p > _limit)
+        while (p > nullptr) // caller must ensure buffer validity
         {
             --p;
             const std::uint8_t byte = *p;
@@ -111,7 +112,6 @@ namespace Types
             }
         }
 
-        // If we fall through, treat as invalid.
         _current = nullptr;
         return *this;
     }

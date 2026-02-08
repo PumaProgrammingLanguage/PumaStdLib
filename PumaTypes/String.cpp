@@ -121,9 +121,9 @@ namespace Types
 		return sizeof(String);
 	}
 
-	const uint8_t* String::codeUnits() const noexcept
+	const char* String::c_str() const noexcept
 	{
-		return isShort() ? shortStr.codeUnits : longStr.ptr;
+		return (const char*)(isShort() ? shortStr.codeUnits : longStr.ptr);
 	}
 
 	void String::release() noexcept
@@ -175,13 +175,13 @@ namespace Types
 	// Iterator support: first code unit.
 	StringIterator String::First() const noexcept
 	{
-		return StringIterator(codeUnits(), codeUnits() + Size());
+		return StringIterator(*this);
 	}
 
 	// Iterator support: iterator to first byte of last UTF‑8 character (or invalid if empty/malformed).
 	StringIterator String::Last() const noexcept
 	{
-	    const uint8_t* first = codeUnits();
+	    const uint8_t* first = (const uint8_t*)c_str();
 	    const uint32_t size  = Size();
 
 	    if (size == 0 || first == nullptr)
