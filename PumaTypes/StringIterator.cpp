@@ -1,3 +1,4 @@
+// PumaTypes/StringIterator.cpp
 #include "pch.h"
 #include "framework.h"
 #include "StringIterator.hpp"
@@ -9,19 +10,22 @@ namespace Types
 
     // Default constructor - creates an invalid iterator
     StringIterator::StringIterator() noexcept
-        : utf8(nullptr)
+        : _current(nullptr)
+        , _limit(nullptr)
     {
     }
 
-    // Constructor with String
-    StringIterator::StringIterator(const uint8_t* ptr) noexcept
-        : utf8(ptr)
+    // Constructor with position (no limit known yet)
+    StringIterator::StringIterator(const uint8_t* current, const uint8_t* limit) noexcept
+        : _current(current)
+        , _limit(limit)
     {
     }
 
     // Copy constructor
     StringIterator::StringIterator(const StringIterator& other) noexcept
-        : utf8(other.utf8)
+        : _current(other._current)
+        , _limit(other._limit)
     {
     }
 
@@ -30,42 +34,104 @@ namespace Types
     {
         if (this != &other)
         {
-            utf8 = other.utf8;
+            _current = other._current;
+            _limit   = other._limit;
         }
         return *this;
     }
 
-    // Assign from pointer
+    // Assign from pointer (does not change limit)
     StringIterator& StringIterator::operator=(const uint8_t* ptr) noexcept
     {
-        utf8 = ptr;
+        _current = ptr;
         return *this;
     }
 
-    // Dereference operator - returns current position
+    // Dereference operator - returns current character
     const Charactor StringIterator::operator*() const noexcept
     {
-		Charactor charactor(utf8);
-        return charactor;
+        return Charactor(_current);
+    }
+
+    // Add raw byte offset (no UTF-8 awareness)
+    StringIterator StringIterator::operator+(std::uint32_t offset) const noexcept
+    {
+        if (!_current)
+        {
+            return StringIterator(nullptr);
+        }
+
+        StringIterator result(*this);
+        result._current = _current + offset;
+        return result;
+    }
+
+    // Prefix increment - move forward one UTF-8 character
+    StringIterator& StringIterator::operator++() noexcept
+    {
+        if (_current != nullptr)
+        {
+            const std::uint8_t firstByte = *_current;
+            const std::uint8_t charSize  = Charactor::GetCharSize(firstByte);
+            _current += charSize;
+
+            // Respect optional limit if set
+            if (_limit && _current >= _limit)
+            {
+                _current = nullptr;
+            }
+        }
+        return *this;
+    }
+
+    // Prefix decrement - move backward one UTF-8 character
+    StringIterator& StringIterator::operator--() noexcept
+    {
+        if (_current == nullptr)
+        {
+            return *this;
+        }
+
+        const uint8_t* p = _current;
+
+        // Walk backwards until we find the leading byte of the previous UTF‑8 code point.
+        // NOTE: _limit is an end pointer; we don't know the begin explicitly here.
+        // Caller must ensure _current stays within a valid buffer.
+        while (p > _limit)
+        {
+            --p;
+            const std::uint8_t byte = *p;
+
+            // UTF‑8 continuation bytes have the form 10xxxxxx (0x80–0xBF).
+            // Leading bytes are anything that is NOT a continuation byte.
+            if ((byte & 0xC0u) != 0x80u)
+            {
+                _current = p;
+                return *this;
+            }
+        }
+
+        // If we fall through, treat as invalid.
+        _current = nullptr;
+        return *this;
     }
 
     // Equality comparison
     bool StringIterator::operator==(const StringIterator& other) const noexcept
     {
-        return utf8 == other.utf8;
+        return _current == other._current;
     }
 
     // Inequality comparison
     bool StringIterator::operator!=(const StringIterator& other) const noexcept
     {
-		// Leverage equality operator above
         return !(*this == other);
     }
 
     // Check if iterator is valid
     bool StringIterator::IsValid() const noexcept
     {
-        return utf8 != nullptr;
+        return _current != nullptr;
     }
 
 } // namespace Types

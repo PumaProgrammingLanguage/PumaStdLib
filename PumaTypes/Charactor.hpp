@@ -30,6 +30,7 @@ namespace Types
 		// Returns the number of bytes in the UTF‑8 code unit sequence starting with 'c'.
 		// Invalid leading bytes and continuation bytes return 1.
 		static uint8_t GetCharSize(const uint8_t c) noexcept;
+		uint8_t GetCharSize() noexcept;
 
 	private:
 		// Raw 4-byte representation (e.g., UTF-8 bytes)

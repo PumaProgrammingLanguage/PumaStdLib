@@ -53,8 +53,10 @@ namespace Console
             return;
         }
 
-        // Write the string bytes to stdout (no null terminator needed)
-        cout.write(reinterpret_cast<const char*>(str.First()), strSize);
+        // Fix: Get pointer from StringIterator
+        const Types::StringIterator first = str.First();
+        // Add Ptr() method to StringIterator if not present
+        cout.write(reinterpret_cast<const char*>(first.Ptr()), strSize);
     }
 
     // Writes a uint8_t string to standard output

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Charactor.hpp"
+#include "StringIterator.hpp"
 #include <cstdint>
 #include <cstddef>
 #include <cstring>
@@ -23,6 +24,7 @@ namespace Types
         ~String() noexcept;
 
         String& operator=(const String& source) noexcept;
+
         String ToString() const noexcept;
         void FromString(const String& source) noexcept;
 
@@ -34,11 +36,11 @@ namespace Types
         // get variable size - number of bytes used to store the variable
         uint32_t SizeVar() const noexcept;
 
-        // iterator range support - returns pointer to a UTF-8 code unit
-        const uint8_t* First() const noexcept;
-        const uint8_t* Last() const noexcept;
-        const uint8_t* Next(const uint8_t* current) const noexcept;
-        const uint8_t* Previous(const uint8_t* current) const noexcept;
+        // iterator range support - now returns StringIterator
+        StringIterator First() const noexcept;
+        StringIterator Last() const noexcept;
+        StringIterator Next(const StringIterator& current) const noexcept;
+        StringIterator Previous(const StringIterator& current) const noexcept;
 
     private:
         // Layout (private)

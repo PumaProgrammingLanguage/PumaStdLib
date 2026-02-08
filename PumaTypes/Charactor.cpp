@@ -67,6 +67,11 @@ namespace Types
 		return (uint8_t*)codeUnits;
 	}
 
+	uint8_t Charactor::GetCharSize() noexcept
+	{
+		return UTF8CharSizeLookup[codeUnits[0] >> 3];
+	}
+
 	uint8_t Charactor::GetCharSize(const uint8_t c) noexcept
 	{
 		return UTF8CharSizeLookup[c >> 3];
