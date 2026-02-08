@@ -22,7 +22,6 @@ namespace Types
         // Assignment
         StringIterator& operator=(const StringIterator& other) noexcept;
         StringIterator& operator=(const uint8_t* ptr) noexcept;
-        StringIterator& operator=(const Charactor& charactor) noexcept;
 
         // Dereference - returns current UTF-8 code unit pointer
         const Charactor operator*() const noexcept;

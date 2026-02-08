@@ -13,7 +13,7 @@ namespace Types
     {
     }
 
-    // Constructor with String and position
+    // Constructor with String
     StringIterator::StringIterator(const uint8_t* ptr) noexcept
         : utf8(ptr)
     {
@@ -39,13 +39,6 @@ namespace Types
     StringIterator& StringIterator::operator=(const uint8_t* ptr) noexcept
     {
         utf8 = ptr;
-        return *this;
-    }
-
-	// Assign from Charactor
-    StringIterator& StringIterator::operator=(const Charactor& charactor) noexcept
-    {
-        utf8 = charactor.ToUTF8();
         return *this;
     }
 
