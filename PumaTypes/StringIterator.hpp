@@ -11,10 +11,7 @@ using namespace std;
 namespace Puma {
 namespace Types
 {
-    // Forward declaration
-    union String;
-        
-    class StringIterator
+    struct StringIterator
     {
     public:
         // Constructors
@@ -46,7 +43,7 @@ namespace Types
 
     private:
         const uint8_t* _current;
-        const uint8_t* _limit; // Optional: used to prevent going out of bounds
+        const uint8_t* _limit;
     };
 
 } // namespace Types
