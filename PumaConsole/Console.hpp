@@ -1,25 +1,29 @@
+#ifndef PUMA_CONSOLE_CONSOLE_HPP
+#define PUMA_CONSOLE_CONSOLE_HPP
+
 #pragma once
 
 #include "../PumaTypes/String.hpp"
 #include "../PumaTypes/Charactor.hpp"
+#include <cstdint>
 
 namespace Puma {
 namespace Console
 {
-	// Initializes console IO (UTF-8, unsynced stdio)
+    // Initializes console IO (UTF-8, unsynced stdio)
     void Initialize() noexcept;
 
-	// Restores console IO state changed during Initialize
+    // Restores console IO state changed during Initialize
     void Finalize() noexcept;
 
     // Writes a Puma String to standard output
     void Write(const Types::String& str) noexcept;
 
     // Writes a uint8_t string to standard output
-    void Write(const uint8_t* cstr) noexcept;
+    void Write(const uint8_t* str, const uint32_t size) noexcept;
 
     // Writes a C-string to standard output
-	void Write(const char* cstr) noexcept;
+    void Write(const char* cstr) noexcept;
 
     // Writes a single Puma Charactor to standard output
     void Write(const Types::Charactor& ch) noexcept;
@@ -27,8 +31,8 @@ namespace Console
     // Writes a Puma String to standard output followed by a newline
     void WriteLn(const Types::String& str) noexcept;
 
-	// Writes a C-string to standard output followed by a newline
-	void WriteLn(const char* cstr) noexcept;
+    // Writes a C-string to standard output followed by a newline
+    void WriteLn(const char* cstr) noexcept;
 
     // Writes a single Puma Charactor followed by a newline
     void WriteLn(const Types::Charactor& ch) noexcept;
@@ -42,7 +46,7 @@ namespace Console
     // Reads the next line from standard input (newline excluded)
     Types::String ReadLn() noexcept;
 
-	class CommandPrompt
+    class CommandPrompt
     {
     public:
         CommandPrompt() noexcept;
@@ -54,3 +58,5 @@ namespace Console
     };
 } // namespace Console
 } // namespace Puma
+
+#endif // PUMA_CONSOLE_CONSOLE_HPP

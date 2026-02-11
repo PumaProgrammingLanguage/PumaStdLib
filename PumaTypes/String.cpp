@@ -3,7 +3,6 @@
 #include "pch.h"
 #include "framework.h"
 #include "String.hpp"
-#include "StringIterator.hpp"
 #include <memory.h>
 #include <new>
 
@@ -121,9 +120,9 @@ namespace Types
 		return sizeof(String);
 	}
 
-	const char* String::c_str() const noexcept
+	const uint8_t* String::ToUTF8() const noexcept
 	{
-		return (const char*)(isShort() ? shortStr.codeUnits : longStr.ptr);
+	    return (this->isShort() ? this->shortStr.codeUnits : this->longStr.ptr);
 	}
 
 	void String::release() noexcept
@@ -181,12 +180,12 @@ namespace Types
 	// Iterator support: iterator to first byte of last UTF‑8 character (or invalid if empty/malformed).
 	StringIterator String::Last() const noexcept
 	{
-	    const uint8_t* first = (const uint8_t*)c_str();
+	    const uint8_t* first = (const uint8_t*)ToUTF8();
 	    const uint32_t size  = Size();
 
 	    if (size == 0 || first == nullptr)
 	    {
-	        return StringIterator(nullptr, nullptr);
+	        return StringIterator();
 	    }
 
 	    const uint8_t* p = first + size;
@@ -203,7 +202,7 @@ namespace Types
 	    }
 
 	    // malformed; no valid leading byte found
-	    return StringIterator(nullptr, nullptr);
+	    return StringIterator();
 	}
 
 	// Iterator support: advance to the next UTF‑8 code point.
@@ -211,7 +210,7 @@ namespace Types
 	{
 		if (!current.IsValid())
 		{
-			return StringIterator(nullptr, nullptr);
+			return StringIterator();
 		}
 
 		// Copy, then advance one UTF‑8 character.
@@ -226,7 +225,7 @@ namespace Types
 	{
 		if (!current.IsValid())
 		{
-			return StringIterator(nullptr, nullptr);
+			return StringIterator();
 		}
 
 		// Copy and move back one UTF‑8 character using the iterator's operator--().

@@ -40,7 +40,7 @@ namespace File
 				return false;
 			}
 			// All modern day OSes support forward slashes, so normalize for portable code
-			string native(path.ToCString(), path.ToCString() + path.Size());
+			string native(path.ToUTF8(), path.ToUTF8() + path.Size());
 			replace(native.begin(), native.end(), '\\', '/');
 			// Set current path
 			error_code ec;

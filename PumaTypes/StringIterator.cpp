@@ -24,8 +24,8 @@ namespace Types
 
     // NEW: construct iterator over an entire String
     StringIterator::StringIterator(const String& str) noexcept
-        : _current(str.codeUnits())
-        , _limit(str.codeUnits() + str.Size())
+        : _current((uint8_t*)str.ToUTF8())
+        , _limit((uint8_t*)str.ToUTF8() + str.Size())
     {
     }
 
@@ -65,7 +65,7 @@ namespace Types
     {
         if (!_current)
         {
-            return StringIterator(nullptr, _limit);
+            return StringIterator();
         }
 
         return StringIterator(_current + offset, _limit);
@@ -98,7 +98,7 @@ namespace Types
         const uint8_t* p = _current;
 
         // Walk backwards until we find the leading byte of the previous UTF‑8 code point.
-        while (p > nullptr) // caller must ensure buffer validity
+        while (p > _limit)
         {
             --p;
             const std::uint8_t byte = *p;

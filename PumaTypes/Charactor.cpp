@@ -56,23 +56,23 @@ namespace Types
 		return *this;
 	}
 
-	Types::String Charactor::ToString() const noexcept
+	String Charactor::ToString() const noexcept
 	{
 		const uint8_t charSize = GetCharSize(codeUnits[0]); // 1..4
 		return String(codeUnits, charSize);
 	}
 
-	uint8_t* Charactor::ToUTF8() const noexcept
+	const uint8_t* Charactor::ToUTF8() const noexcept
 	{
-		return (uint8_t*)codeUnits;
+		return codeUnits;
 	}
 
-	uint8_t Charactor::GetCharSize() noexcept
+	const uint8_t Charactor::GetCharSize() const noexcept
 	{
 		return UTF8CharSizeLookup[codeUnits[0] >> 3];
 	}
 
-	uint8_t Charactor::GetCharSize(const uint8_t c) noexcept
+	const uint8_t Charactor::GetCharSize(const uint8_t c) noexcept
 	{
 		return UTF8CharSizeLookup[c >> 3];
 	}

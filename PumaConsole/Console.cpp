@@ -3,6 +3,7 @@
 #include "Console.hpp"
 #include <iostream>
 #include <string>
+#include <cstdio>
 #if defined(_WIN32)
 #include <windows.h>
 
@@ -54,7 +55,7 @@ namespace Console
         }
 
         // Add Ptr() method to StringIterator if not present
-        cout.write(reinterpret_cast<const char*>(str.ToCString()), strSize);
+        cout.write(reinterpret_cast<const char*>(str.ToUTF8()), strSize);
     }
 
     // Writes a uint8_t string to standard output
@@ -93,6 +94,16 @@ namespace Console
     {
         Write(str);
 		// Add newline, does not flush
+        Write("\n");
+    }
+
+    // Writes a uint8_t string to standard output
+    void WriteLn(const uint8_t* str, const uint32_t size) noexcept
+    {
+        if (str && size > 0)
+        {
+            std::fwrite(reinterpret_cast<const char*>(str), sizeof(uint8_t), size, stdout);
+        }
         Write("\n");
     }
 
@@ -182,6 +193,5 @@ namespace Console
         // Hide command prompt
 		m_visible = false;
 	}
-
 } // namespace Console
 } // namespace Puma

@@ -42,7 +42,7 @@ namespace File
 
 		close();
 
-		string native(path.ToCString(), path.ToCString() + path.Size());
+		string native(path.ToUTF8(), path.ToUTF8() + path.Size());
 		replace(native.begin(), native.end(), '/', '\\');
 
 		const char* modeString = nullptr;
@@ -155,7 +155,7 @@ namespace File
 			return true;
 		}
 
-		const size_t written = fwrite(text.First(), sizeof(char), size, handle);
+		const size_t written = fwrite(text.ToUTF8(), sizeof(char), size, handle);
 		return written == size;
 	}
 

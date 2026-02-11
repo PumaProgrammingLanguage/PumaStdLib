@@ -1,7 +1,9 @@
+#ifndef PUMA_TYPES_STRINGITERATOR_HPP
+#define PUMA_TYPES_STRINGITERATOR_HPP
+
 #pragma once
 
 #include "Charactor.hpp"
-#include "String.hpp"
 #include <cstdint>
 
 using namespace std;
@@ -19,8 +21,7 @@ namespace Types
         StringIterator() noexcept;
         StringIterator(const uint8_t* current, const uint8_t* limit) noexcept;
         StringIterator(const StringIterator& other) noexcept;
-        // NEW: construct iterator over an entire String
-        explicit StringIterator(const String& str) noexcept;
+        StringIterator(const String& str) noexcept;
 
         // Assignment
         StringIterator& operator=(const StringIterator& other) noexcept;
@@ -50,3 +51,5 @@ namespace Types
 
 } // namespace Types
 } // namespace Puma
+
+#endif // PUMA_TYPES_STRINGITERATOR_HPP

@@ -1,3 +1,6 @@
+#ifndef PUMA_TYPES_STRING_HPP
+#define PUMA_TYPES_STRING_HPP
+
 #pragma once
 
 #include "Charactor.hpp"
@@ -26,8 +29,9 @@ namespace Types
         String& operator=(const String& source) noexcept;
 
         String ToString() const noexcept;
-        const char* c_str() const noexcept;
         void FromString(const String& source) noexcept;
+        // get raw UTF-8 bytes pointer
+        const uint8_t* ToUTF8() const noexcept;
 
         // Public API
         // get str length - length in characters (code points)
@@ -72,3 +76,5 @@ namespace Types
 
 } // namespace Types
 } // namespace Puma
+
+#endif // PUMA_TYPES_STRING_HPP
