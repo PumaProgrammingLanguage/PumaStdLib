@@ -13,6 +13,7 @@ namespace Types
 	// Default-constructs an empty String (no heap allocation).
 	String::String() noexcept
 	{
+		// Initialize the union to represent an empty string (short string with length 0).
 		packedValues.firstHalf = 0;
 		packedValues.secondHalf = 0;
 	}
@@ -29,40 +30,59 @@ namespace Types
 	{
 		if (data == nullptr || dataSize == 0)
 		{
+			// Empty string: no heap allocation needed, just leave the default empty state.
 			return;
 		}
-
+		// Check if the string can be stored as a short string (fits within the codeUnits array).
 		if (dataSize <= sizeof(shortStr.codeUnits))
 		{
+			// Short string: store directly in the union (no heap allocation).
+			// Long flag and owner flags are already 0. 
+			
+			// Length is stored in the lower 4 bits of the tag.
 			shortStr.tag = static_cast<uint8_t>(dataSize & LENGTH_MASK);
 			if (dataSize > 0)
 			{
+				// Copy the string data into the codeUnits array.
 				memcpy(shortStr.codeUnits, data, dataSize);
 			}
 		}
 		else
 		{
-			longStr.tag = LONG_MASK;
-			longStr.strSize = static_cast<uint32_t>(dataSize);
-
 			uint8_t* buf = new (nothrow) uint8_t[dataSize];
 			if (buf != nullptr)
 			{
+				// Copy the string data into the newly allocated buffer.
 				memcpy(buf, data, dataSize);
 				longStr.ptr = buf;
+				// Set as long string with ownership.
+				longStr.tag = LONG_OWNER_FLAG;
+				// Store the string size in bytes.
+				longStr.strSize = static_cast<uint32_t>(dataSize);
 			}
 			else
 			{
+				// Allocation failed: fallback to empty string (no heap allocation).
 				packedValues.firstHalf = 0;
 				packedValues.secondHalf = 0;
 			}
 		}
 	}
 
-	String::String(const String& source) noexcept
+	String::String(String& source, bool moveOwner) noexcept
 		: String()
 	{
-		FromString(source);
+		// Copy the source string's data into this string.
+		packedValues.firstHalf = source.packedValues.firstHalf;
+		packedValues.secondHalf = source.packedValues.secondHalf;
+
+		// check if we should transfer ownership
+		if(moveOwner && source.isLongOwner())
+		{
+			// transfer ownership of the string data from the source to this string.
+			source.ClearOwner();
+			SetOwner();
+		}
 	}
 
 	String::~String() noexcept
@@ -77,18 +97,63 @@ namespace Types
 			return *this;
 		}
 
-		FromString(source);
+		// Release current resources before copying new data.
+		release();
+		// Copy the source string's data into this string.
+		packedValues.firstHalf = source.packedValues.firstHalf;
+		packedValues.secondHalf = source.packedValues.secondHalf;
+		// String assignments doesn't transfer ownership.
+		if (isLongOwner())
+		{
+			ClearOwner();
+		}
 		return *this;
 	}
 
 	bool String::isShort() const noexcept
 	{
-		return (shortStr.tag & SHORT_MASK) == 0;
+		// A short string is identified by the LONG_FLAG bit not set (SHORT_FLAG) in the tag.
+		return (shortStr.tag & SHORT_MASK) == SHORT_FLAG;
 	}
 
 	bool String::isLong() const noexcept
 	{
-		return (longStr.tag & LONG_MASK) != 0;
+		// A long string is identified by the LONG_FLAG bit set in the tag.
+		return (longStr.tag & LONG_MASK) == LONG_FLAG;
+	}
+
+	bool String::isLongOwner() const noexcept
+	{
+		// A long string is an owner if both the LONG_FLAG and OWNER_FLAG bits are set in the tag.
+		return (longStr.tag & LONG_OWNER_MASK) == LONG_OWNER_FLAG;
+	}
+
+	void String::SetOwner() noexcept
+	{
+		// Only applicable for long strings; short strings are value types (stored directly in the union).
+		if (isLong())
+		{
+			// Set the owner flag for long strings.
+			longStr.tag |= OWNER_FLAG;
+		}
+		// Short strings are value types and do not have an owner flag, so we do nothing for short strings.
+	}
+
+	void String::ClearOwner() noexcept
+	{
+		// Only applicable for long strings; short strings are value types (stored directly in the union).
+		if (isLong())
+		{
+			// Clear the owner flag for long strings.
+			longStr.tag &= ~OWNER_FLAG;
+		}
+		// Short strings are value types and do not have an owner flag, so we do nothing for short strings.
+	}
+
+	bool String::IsOwner() const noexcept
+	{
+		// Only applicable for long strings; short strings are value types (stored directly in the union).
+		return isLongOwner();
 	}
 
 	uint32_t String::Length() const noexcept
@@ -136,37 +201,7 @@ namespace Types
 		packedValues.secondHalf = 0;
 	}
 
-	void String::FromString(const String& source) noexcept
-	{
-		if (source.isShort())
-		{
-			packedValues.firstHalf  = source.packedValues.firstHalf;
-			packedValues.secondHalf = source.packedValues.secondHalf;
-			return;
-		}
-
-		if (source.longStr.ptr != nullptr)
-		{
-			const size_t bufferSize = static_cast<size_t>(source.longStr.strSize);
-			if (bufferSize > 0)
-			{
-				uint8_t* buffer = new (nothrow) uint8_t[bufferSize];
-				if (buffer != nullptr)
-				{
-					memcpy_s(buffer, bufferSize, source.longStr.ptr, bufferSize);
-					longStr.tag     = source.longStr.tag;
-					longStr.strSize = static_cast<uint32_t>(bufferSize);
-					longStr.ptr     = buffer;
-					return;
-				}
-			}
-		}
-
-		packedValues.firstHalf = 0;
-		packedValues.secondHalf = 0;
-	}
-
-	String String::ToString() const noexcept
+	String String::ToString() noexcept
 	{
 		return String(*this);
 	}

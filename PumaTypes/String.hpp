@@ -21,19 +21,23 @@ namespace Types
     public:
         // Lifetime
         String() noexcept;
-        String(const String& source) noexcept;
+        String(String& source, bool moveOwner = false) noexcept;
         String(const uint8_t* data, uint32_t dataSize) noexcept;
         String(const char* data, size_t dataSize) noexcept;
         ~String() noexcept;
 
         String& operator=(const String& source) noexcept;
 
-        String ToString() const noexcept;
-        void FromString(const String& source) noexcept;
+        String ToString() noexcept;
         // get raw UTF-8 bytes pointer
         const uint8_t* ToUTF8() const noexcept;
 
-        // Public API
+        // Set ownership of the string data (for long strings) - if true, the String will manage memory and free it on destruction; 
+        // if false, it will not free memory (caller must manage lifetime).
+		void SetOwner() noexcept;
+		void ClearOwner() noexcept;
+		bool IsOwner() const noexcept;
+
         // get str length - length in characters (code points)
         uint32_t Length() const noexcept;
         // get str size - length in bytes
@@ -63,12 +67,18 @@ namespace Types
 
         // Masks (private) - UPPER_CASE
         static constexpr uint8_t SHORT_MASK  = 0x80;
-        static constexpr uint8_t LENGTH_MASK = 0x0F;
+		static constexpr uint8_t SHORT_FLAG = 0x00;
         static constexpr uint8_t LONG_MASK   = 0x80;
+		static constexpr uint8_t LONG_FLAG = 0x80;
+		static constexpr uint8_t LONG_OWNER_MASK = 0xC0;
+        static constexpr uint8_t OWNER_FLAG = 0x40;
+		static constexpr uint8_t LONG_OWNER_FLAG = (LONG_FLAG | OWNER_FLAG);
+        static constexpr uint8_t LENGTH_MASK = 0x0F;
 
         // Helpers (private) - lowerCamelCase
         bool isShort() const noexcept;
         bool isLong()  const noexcept;
+		bool isLongOwner() const noexcept;
 
         void release() noexcept;
     };
