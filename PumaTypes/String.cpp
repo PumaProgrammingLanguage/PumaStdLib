@@ -80,7 +80,9 @@ namespace Types
 		if(moveOwner && source.isLongOwner())
 		{
 			// transfer ownership of the string data from the source to this string.
-			source.ClearOwner();
+			// Set the source string as a borrower (non-owner) since ownership is being transferred.
+			source.SetBorrower();
+			// Set this string as the new owner of the data.
 			SetOwner();
 		}
 	}
@@ -105,7 +107,7 @@ namespace Types
 		// String assignments doesn't transfer ownership.
 		if (isLongOwner())
 		{
-			ClearOwner();
+			SetBorrower();
 		}
 		return *this;
 	}
@@ -139,7 +141,7 @@ namespace Types
 		// Short strings are value types and do not have an owner flag, so we do nothing for short strings.
 	}
 
-	void String::ClearOwner() noexcept
+	void String::SetBorrower() noexcept
 	{
 		// Only applicable for long strings; short strings are value types (stored directly in the union).
 		if (isLong())
@@ -185,14 +187,33 @@ namespace Types
 		return sizeof(String);
 	}
 
+	// Returns a pointer to the UTF-8 bytes of the string. The caller is responsible for deleting the returned buffer.
 	const uint8_t* String::ToUTF8() const noexcept
 	{
-	    return (this->isShort() ? this->shortStr.codeUnits : this->longStr.ptr);
+		uint8_t* buf = new (nothrow) uint8_t[Size() + 1];
+		if (buf != nullptr)
+		{
+			// Copy the string data into the newly allocated buffer.
+			memcpy(buf, stringData(), Size());
+			// Null-terminate the buffer.
+			buf[Size()] = '\0';
+			return buf;
+		}
+		else
+		{
+			// Allocation failed: return nullptr.
+			return nullptr;
+		}
+	}
+
+	const uint8_t* String::stringData() const
+	{
+		return (this->isShort() ? this->shortStr.codeUnits : this->longStr.ptr);
 	}
 
 	void String::release() noexcept
 	{
-		if (isLong() && longStr.ptr != nullptr)
+		if (isLongOwner() && longStr.ptr != nullptr)
 		{
 			delete[] longStr.ptr;
 		}
@@ -203,7 +224,8 @@ namespace Types
 
 	String String::ToString() noexcept
 	{
-		return String(*this);
+		// Return a copy of this string (copy constructor semantics).
+		return String(stringData(), Size());
 	}
 
 	// Iterator support: first code unit.
