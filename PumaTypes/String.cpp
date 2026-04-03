@@ -225,7 +225,7 @@ namespace Types
 	String String::ToString() noexcept
 	{
 		// Return a copy of this string (copy constructor semantics).
-		return String(stringData(), Size());
+		return *this;
 	}
 
 	// Iterator support: first code unit.
