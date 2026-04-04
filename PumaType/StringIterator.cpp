@@ -1,4 +1,4 @@
-// PumaTypes/StringIterator.cpp
+// PumaType/StringIterator.cpp
 #include "pch.h"
 #include "framework.h"
 #include "StringIterator.hpp"

@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "../PumaTypes/String.hpp"
-#include "../PumaTypes/Charactor.hpp"
+#include "../PumaType/String.hpp"
+#include "../PumaType/Charactor.hpp"
 #include <cstdint>
 
 namespace Puma {

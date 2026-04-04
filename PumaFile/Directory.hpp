@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "../PumaTypes/String.hpp"
+#include "../PumaType/String.hpp"
 
 namespace Puma {
 namespace File
