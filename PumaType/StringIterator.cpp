@@ -5,7 +5,7 @@
 #include "String.hpp"
 
 namespace Puma {
-namespace Types
+namespace Type
 {
 
     // Default constructor - creates an invalid iterator
@@ -134,5 +134,5 @@ namespace Types
         return _current != nullptr;
     }
 
-} // namespace Types
+} // namespace Type
 } // namespace Puma

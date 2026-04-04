@@ -5,7 +5,7 @@
 #include <cstddef>
 
 namespace Puma {
-namespace Types
+namespace Type
 {
 	namespace
 	{
@@ -76,5 +76,5 @@ namespace Types
 	{
 		return UTF8CharSizeLookup[c >> 3];
 	}
-} // namespace Types
+} // namespace Type
 } // namespace Puma

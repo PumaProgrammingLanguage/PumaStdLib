@@ -6,7 +6,7 @@
 #include <cstdint>
 
 namespace Puma {
-namespace Types
+namespace Type
 {
     // Forward declaration to avoid circular include with String.hpp
     union String;
@@ -43,7 +43,7 @@ namespace Types
         // Packed 32-bit representation of the same 4 bytes
         uint32_t packedValue;
     };
-} // namespace Types
+} // namespace Type
 } // namespace Puma
 
 #endif // PUMA_TYPES_CHARACTOR_HPP

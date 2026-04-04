@@ -44,7 +44,7 @@ namespace Console
     }
 
     // Writes a Puma String to standard output
-    void Write(const Types::String& str) noexcept
+    void Write(const Type::String& str) noexcept
     {
         const uint32_t strSize = str.Size();
 
@@ -83,14 +83,14 @@ namespace Console
     }
 
     // Writes a single Puma Charactor to standard output
-    void Write(const Types::Charactor& ch) noexcept
+    void Write(const Type::Charactor& ch) noexcept
     {
-        const Types::String tmp = ch.ToString();
+        const Type::String tmp = ch.ToString();
         Write(tmp);
     }
 
     // Writes a Puma String to standard output followed by a newline
-    void WriteLn(const Types::String& str) noexcept
+    void WriteLn(const Type::String& str) noexcept
     {
         Write(str);
 		// Add newline, does not flush
@@ -115,11 +115,11 @@ namespace Console
             return;
         }
 
-        WriteLn(Types::String(cstr, strlen(cstr)));
+        WriteLn(Type::String(cstr, strlen(cstr)));
     }
 
     // Writes a single Puma Charactor followed by a newline
-    void WriteLn(const Types::Charactor& ch) noexcept
+    void WriteLn(const Type::Charactor& ch) noexcept
     {
         Write(ch);
         Write("\n");
@@ -131,29 +131,29 @@ namespace Console
     }
 
     // Reads the next whitespace-delimited token from standard input
-    Types::String Read() noexcept
+    Type::String Read() noexcept
     {
         string buffer;
         if (!(cin >> buffer))
         {
             cin.clear();
-            return Types::String();
+            return Type::String();
         }
 
-        return Types::String(buffer.c_str(), buffer.size());
+        return Type::String(buffer.c_str(), buffer.size());
     }
 
     // Reads the next line from standard input (newline excluded)
-    Types::String ReadLn() noexcept
+    Type::String ReadLn() noexcept
     {
         string buffer;
         if (!getline(cin, buffer))
         {
             cin.clear();
-            return Types::String();
+            return Type::String();
         }
 
-        return Types::String(buffer.c_str(), buffer.size());
+        return Type::String(buffer.c_str(), buffer.size());
     }
 
     // Initializes console IO (UTF-8, unsynced stdio)

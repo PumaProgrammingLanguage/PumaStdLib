@@ -7,7 +7,7 @@
 #include <new>
 
 namespace Puma {
-namespace Types
+namespace Type
 {
 
 	// Default-constructs an empty String (no heap allocation).
@@ -292,5 +292,5 @@ namespace Types
 		return prevIt;
 	}
 
-} // namespace Types
+} // namespace Type
 } // namespace Puma

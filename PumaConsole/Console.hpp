@@ -17,7 +17,7 @@ namespace Console
     void Finalize() noexcept;
 
     // Writes a Puma String to standard output
-    void Write(const Types::String& str) noexcept;
+    void Write(const Type::String& str) noexcept;
 
     // Writes a uint8_t string to standard output
     void Write(const uint8_t* str, const uint32_t size) noexcept;
@@ -26,25 +26,25 @@ namespace Console
     void Write(const char* cstr) noexcept;
 
     // Writes a single Puma Charactor to standard output
-    void Write(const Types::Charactor& ch) noexcept;
+    void Write(const Type::Charactor& ch) noexcept;
 
     // Writes a Puma String to standard output followed by a newline
-    void WriteLn(const Types::String& str) noexcept;
+    void WriteLn(const Type::String& str) noexcept;
 
     // Writes a C-string to standard output followed by a newline
     void WriteLn(const char* cstr) noexcept;
 
     // Writes a single Puma Charactor followed by a newline
-    void WriteLn(const Types::Charactor& ch) noexcept;
+    void WriteLn(const Type::Charactor& ch) noexcept;
 
     // Flushes the standard output buffer
     void Flush() noexcept;
 
     // Reads the next whitespace-delimited token from standard input
-    Types::String Read() noexcept;
+    Type::String Read() noexcept;
 
     // Reads the next line from standard input (newline excluded)
-    Types::String ReadLn() noexcept;
+    Type::String ReadLn() noexcept;
 
     class CommandPrompt
     {

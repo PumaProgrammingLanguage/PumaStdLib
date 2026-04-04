@@ -8,7 +8,7 @@ namespace Puma {
 namespace File
 {
 	// Open file at path with mode (default is READ_WRITE)
-	Text::Text(const Types::String& path, OpenMode mode) noexcept
+   Text::Text(const Type::String& path, OpenMode mode) noexcept
 		: handle(nullptr), adjustPosition(false)
 	{
 		open(path, mode);
@@ -33,7 +33,7 @@ namespace File
 	}
 
 	// Opens the file at path with mode (default is READ_WRITE)
-	bool Text::open(const Types::String& path, OpenMode mode) noexcept
+  bool Text::open(const Type::String& path, OpenMode mode) noexcept
 	{
 		if (path.Size() == 0)
 		{
@@ -96,7 +96,7 @@ namespace File
 	}
 
 	// Reads the next whitespace-delimited word from the file
-	Types::String Text::Read() noexcept
+ Type::String Text::Read() noexcept
 	{
 		if (handle != nullptr)
 		{
@@ -111,17 +111,17 @@ namespace File
 				buffer[1023] = '\0';
 				result = buffer;
 			}
-			return Types::String(result.data(), result.size());
+         return Type::String(result.data(), result.size());
 		}
 		else
 		{
 			// File not open
-			return Types::String();
+         return Type::String();
 		}
 	}
 
 	// Read until end of line or end of file
-	Types::String Text::ReadLn() noexcept
+   Type::String Text::ReadLn() noexcept
 	{
 		if (handle != nullptr)
 		{
@@ -132,17 +132,17 @@ namespace File
 				result += buffer;
 			}
 
-			return Types::String(result.data(), result.size());
+         return Type::String(result.data(), result.size());
 		}
 		else
 		{
 			// File not open
-			return Types::String();
+         return Type::String();
 		}
 	}
 
 	// Writes text to the file
-	bool Text::Write(const Types::String& text) noexcept
+    bool Text::Write(const Type::String& text) noexcept
 	{
 		if (handle == nullptr)
 		{
@@ -160,14 +160,14 @@ namespace File
 	}
 
 	// Writes a single Charactor to the file
-	bool Text::Write(const Types::Charactor& ch) noexcept
+   bool Text::Write(const Type::Charactor& ch) noexcept
 	{
 		// Convert Charactor to a one-character String and reuse existing Write
 		return Write(ch.ToString());
 	}
 
 	// Writes text followed by a newline to the file
-	bool Text::WriteLn(const Types::String& text) noexcept
+  bool Text::WriteLn(const Type::String& text) noexcept
 	{
 		if (!Write(text))
 		{
@@ -178,7 +178,7 @@ namespace File
 	}
 
 	// Writes a single Charactor followed by a newline to the file
-	bool Text::WriteLn(const Types::Charactor& ch) noexcept
+ bool Text::WriteLn(const Type::Charactor& ch) noexcept
 	{
 		if (!Write(ch))
 		{

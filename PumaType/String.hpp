@@ -13,7 +13,7 @@
 using namespace std;
 
 namespace Puma {
-namespace Types
+namespace Type
 {
 #pragma pack(push, 1)
     union String
@@ -103,7 +103,7 @@ namespace Types
     };
 #pragma pack(pop)
 
-} // namespace Types
+} // namespace Type
 } // namespace Puma
 
 #endif // PUMA_TYPES_STRING_HPP

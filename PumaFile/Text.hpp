@@ -31,7 +31,7 @@ namespace File
         // Default constructor
         Text() noexcept;
         // Open file at path with mode (default is READ_WRITE)
-        Text(const Types::String& path, OpenMode mode = OpenMode::READ_WRITE) noexcept;
+        Text(const Type::String& path, OpenMode mode = OpenMode::READ_WRITE) noexcept;
         ~Text() noexcept;
         // Assign from another Text
         Text& operator=(Text&& other) noexcept;
@@ -39,21 +39,21 @@ namespace File
         bool IsOpen() const noexcept;
 
         // Reads the next whitespace-delimited word from the file
-        Types::String Read() noexcept;
+        Type::String Read() noexcept;
         // Reads the next line from the file (newline excluded)
-        Types::String ReadLn() noexcept;
+        Type::String ReadLn() noexcept;
         // Writes text to the file
-        bool Write(const Types::String& text) noexcept;
+        bool Write(const Type::String& text) noexcept;
         // Writes a single Charactor to the file
-        bool Write(const Types::Charactor& ch) noexcept;
+        bool Write(const Type::Charactor& ch) noexcept;
         // Writes text followed by a newline to the file
-        bool WriteLn(const Types::String& text) noexcept;
+        bool WriteLn(const Type::String& text) noexcept;
         // Writes a single Charactor followed by a newline to the file
-        bool WriteLn(const Types::Charactor& ch) noexcept;
+        bool WriteLn(const Type::Charactor& ch) noexcept;
 
     private:
         // Opens the file at path with mode (default is READ_WRITE)
-        bool open(const Types::String& path, OpenMode mode) noexcept;
+        bool open(const Type::String& path, OpenMode mode) noexcept;
         // Closes the file if open
         void close() noexcept;
 

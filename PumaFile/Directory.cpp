@@ -13,25 +13,25 @@ namespace File
 	namespace Directory
 	{
 		// Get current working directory - normalized to forward slashes
-		Types::String GetCurrentDirectory() noexcept
+        Type::String GetCurrentDirectory() noexcept
 		{
 			error_code ec;
 			const filesystem::path path = filesystem::current_path(ec);
 			// On error, return empty string
 			if (ec)
 			{
-				return Types::String();
+             return Type::String();
 			}
 
 			// Normalize to forward slashes - Puma does not support backslashes
 			string normalizedPath = path.string();
 			replace(normalizedPath.begin(), normalizedPath.end(), '\\', '/');
-			// Return as Types::String
-			return Types::String(normalizedPath.data(), normalizedPath.size());
+          // Return as Type::String
+			return Type::String(normalizedPath.data(), normalizedPath.size());
 		}
 
 		// Set current working directory - normalized to forward slashes
-		static bool SetCurrentDirectory(const Types::String& path) noexcept
+     static bool SetCurrentDirectory(const Type::String& path) noexcept
 		{
 			const uint32_t pathSize = path.Size();
 			// Empty path is invalid
