@@ -1,5 +1,5 @@
-#ifndef PUMA_TYPES_STRINGITERATOR_HPP
-#define PUMA_TYPES_STRINGITERATOR_HPP
+#ifndef PUMA_TYPE_STRINGITERATOR_HPP
+#define PUMA_TYPE_STRINGITERATOR_HPP
 
 #pragma once
 
@@ -49,4 +49,4 @@ namespace Type
 } // namespace Type
 } // namespace Puma
 
-#endif // PUMA_TYPES_STRINGITERATOR_HPP
+#endif // PUMA_TYPE_STRINGITERATOR_HPP

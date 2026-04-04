@@ -1,5 +1,5 @@
-#ifndef PUMA_TYPES_STRING_HPP
-#define PUMA_TYPES_STRING_HPP
+#ifndef PUMA_TYPE_STRING_HPP
+#define PUMA_TYPE_STRING_HPP
 
 #pragma once
 
@@ -106,4 +106,4 @@ namespace Type
 } // namespace Type
 } // namespace Puma
 
-#endif // PUMA_TYPES_STRING_HPP
+#endif // PUMA_TYPE_STRING_HPP
