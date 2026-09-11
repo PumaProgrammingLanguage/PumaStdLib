@@ -1,9 +1,9 @@
-#ifndef PUMA_TYPES_STRINGITERATOR_HPP
-#define PUMA_TYPES_STRINGITERATOR_HPP
+#ifndef PUMA_TYPE_STRINGITERATOR_HPP
+#define PUMA_TYPE_STRINGITERATOR_HPP
 
 #pragma once
 
-#include "Charactor.hpp"
+#include "Character.hpp"
 #include <cstdint>
 
 using namespace std;
@@ -24,7 +24,7 @@ namespace PumaType
         StringIterator& operator=(const uint8_t* ptr) noexcept;
 
         // Dereference - returns current UTF-8 code unit pointer
-        const Charactor operator*() const noexcept;
+        const Character operator*() const noexcept;
 
         // Add raw byte offset (no UTF-8 awareness, just pointer math)
         StringIterator operator+(std::uint32_t offset) const noexcept;
@@ -47,4 +47,4 @@ namespace PumaType
 
 } // namespace PumaType
 
-#endif // PUMA_TYPES_STRINGITERATOR_HPP
+#endif // PUMA_TYPE_STRINGITERATOR_HPP

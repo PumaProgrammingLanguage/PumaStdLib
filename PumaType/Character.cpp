@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "framework.h"
-#include "Charactor.hpp"
-#include "String.hpp" // needed for Charactor::ToString()
+#include "Character.hpp"
+#include "String.hpp" // needed for Character::ToString()
 #include <cstddef>
 
 namespace PumaType
@@ -20,17 +20,17 @@ namespace PumaType
 		};
 	}
 
-	Charactor::Charactor() noexcept
+	Character::Character() noexcept
 		: packedValue(0U)
 	{
 	}
 
-	Charactor::Charactor(const Charactor& source) noexcept
+	Character::Character(const Character& source) noexcept
 		: packedValue(source.packedValue)
 	{
 	}
 
-	Charactor::Charactor(const uint8_t* data) noexcept
+	Character::Character(const uint8_t* data) noexcept
 	: packedValue(0U)
 	{
 		if (data == nullptr)
@@ -44,9 +44,9 @@ namespace PumaType
 		memcpy_s(codeUnits, sizeof(codeUnits), data, charSize);
 	}
 
-	Charactor::~Charactor() noexcept = default;
+	Character::~Character() noexcept = default;
 
-	Charactor& Charactor::operator=(const Charactor& source) noexcept
+	Character& Character::operator=(const Character& source) noexcept
 	{
 		if (this != &source)
 		{
@@ -55,23 +55,23 @@ namespace PumaType
 		return *this;
 	}
 
-	String Charactor::ToString() const noexcept
+	String Character::ToString() const noexcept
 	{
 		const uint8_t charSize = GetCharSize(codeUnits[0]); // 1..4
 		return String(codeUnits, charSize);
 	}
 
-	const uint8_t* Charactor::ToUTF8() const noexcept
+	const uint8_t* Character::ToUTF8() const noexcept
 	{
 		return codeUnits;
 	}
 
-	const uint8_t Charactor::GetCharSize() const noexcept
+	const uint8_t Character::GetCharSize() const noexcept
 	{
 		return UTF8CharSizeLookup[codeUnits[0] >> 3];
 	}
 
-	const uint8_t Charactor::GetCharSize(const uint8_t c) noexcept
+	const uint8_t Character::GetCharSize(const uint8_t c) noexcept
 	{
 		return UTF8CharSizeLookup[c >> 3];
 	}

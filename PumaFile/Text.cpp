@@ -158,10 +158,10 @@ namespace PumaFile
 		return written == size;
 	}
 
-	// Writes a single Charactor to the file
-   bool Text::Write(const PumaType::Charactor& ch) noexcept
+	// Writes a single Character to the file
+   bool Text::Write(const PumaType::Character& ch) noexcept
 	{
-		// Convert Charactor to a one-character String and reuse existing Write
+		// Convert Character to a one-character String and reuse existing Write
 		return Write(ch.ToString());
 	}
 
@@ -176,8 +176,8 @@ namespace PumaFile
 		return fputc('\n', handle) != EOF;
 	}
 
-	// Writes a single Charactor followed by a newline to the file
- bool Text::WriteLn(const PumaType::Charactor& ch) noexcept
+	// Writes a single Character followed by a newline to the file
+ bool Text::WriteLn(const PumaType::Character& ch) noexcept
 	{
 		if (!Write(ch))
 		{

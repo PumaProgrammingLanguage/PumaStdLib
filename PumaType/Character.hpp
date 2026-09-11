@@ -1,5 +1,5 @@
-#ifndef PUMA_TYPES_CHARACTOR_HPP
-#define PUMA_TYPES_CHARACTOR_HPP
+#ifndef PUMA_TYPE_CHARACTER_HPP
+#define PUMA_TYPE_CHARACTER_HPP
 
 #pragma once
 
@@ -11,17 +11,17 @@ namespace PumaType
     union String;
 
     // Represents a UTF-8 character (code point) as a sequence of up to 4 bytes.
-    union Charactor
+    union Character
     {
     public:
         // Lifetime
-        Charactor() noexcept;
-        Charactor(const Charactor& source) noexcept;
-        Charactor(const uint8_t* data) noexcept;
-        ~Charactor() noexcept;
+        Character() noexcept;
+        Character(const Character& source) noexcept;
+        Character(const uint8_t* data) noexcept;
+        ~Character() noexcept;
 
         // Assignment
-        Charactor& operator=(const Charactor& source) noexcept;
+        Character& operator=(const Character& source) noexcept;
 
         // Convert this UTF-8 character into a Puma String.
         String ToString() const noexcept;
@@ -29,7 +29,7 @@ namespace PumaType
         // Get pointer to the UTF-8 code unit.
         const uint8_t* ToUTF8() const noexcept;
 
-		// Returns the number of bytes in the UTF‑8 code unit sequence stored in this Charactor.
+		// Returns the number of bytes in the UTF‑8 code unit sequence stored in this Character.
         const uint8_t GetCharSize() const noexcept;
 
         // Returns the number of bytes in the UTF‑8 code unit sequence starting with 'c'.
@@ -44,4 +44,4 @@ namespace PumaType
     };
 } // namespace PumaType
 
-#endif // PUMA_TYPES_CHARACTOR_HPP
+#endif // PUMA_TYPE_CHARACTER_HPP

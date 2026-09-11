@@ -78,7 +78,7 @@
       <Command>if not exist "$(USERPROFILE)\Puma\lib\$(Platform)\$(Configuration)\" mkdir "$(USERPROFILE)\Puma\lib\$(Platform)\$(Configuration)"
 copy /Y "$(TargetPath)" "$(USERPROFILE)\Puma\lib\$(Platform)\$(Configuration)\"
 if not exist "$(USERPROFILE)\Puma\include\PumaType\" mkdir "$(USERPROFILE)\Puma\include\PumaType"
-copy /Y "$(ProjectDir)Charactor.hpp" "$(USERPROFILE)\Puma\include\PumaType\"
+copy /Y "$(ProjectDir)Character.hpp" "$(USERPROFILE)\Puma\include\PumaType\"
 copy /Y "$(ProjectDir)String.hpp" "$(USERPROFILE)\Puma\include\PumaType\"
 copy /Y "$(ProjectDir)StringIterator.hpp" "$(USERPROFILE)\Puma\include\PumaType\"</Command>
     </PostBuildEvent>
@@ -152,14 +152,14 @@ copy /Y "$(ProjectDir)StringIterator.hpp" "$(USERPROFILE)\Puma\include\PumaType\
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Charactor.hpp" />
+    <ClInclude Include="Character.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="String.hpp" />
     <ClInclude Include="StringIterator.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Charactor.cpp" />
+    <ClCompile Include="Character.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -4,7 +4,7 @@
 #pragma once
 
 #include "../PumaType/String.hpp"
-#include "../PumaType/Charactor.hpp"
+#include "../PumaType/Character.hpp"
 #include <cstdint>
 
 namespace PumaConsole
@@ -24,8 +24,8 @@ namespace PumaConsole
     // Writes a C-string to standard output
     void Write(const char* cstr) noexcept;
 
-    // Writes a single Puma Charactor to standard output
-    void Write(const PumaType::Charactor& ch) noexcept;
+    // Writes a single Puma Character to standard output
+    void Write(const PumaType::Character& ch) noexcept;
 
     // Writes a Puma String to standard output followed by a newline
     void WriteLn(const PumaType::String& str) noexcept;
@@ -33,8 +33,8 @@ namespace PumaConsole
     // Writes a C-string to standard output followed by a newline
     void WriteLn(const char* cstr) noexcept;
 
-    // Writes a single Puma Charactor followed by a newline
-    void WriteLn(const PumaType::Charactor& ch) noexcept;
+    // Writes a single Puma Character followed by a newline
+    void WriteLn(const PumaType::Character& ch) noexcept;
 
     // Flushes the standard output buffer
     void Flush() noexcept;

@@ -81,8 +81,8 @@ namespace PumaConsole
         cout.write(cstr, strlen(cstr));
     }
 
-    // Writes a single Puma Charactor to standard output
-    void Write(const PumaType::Charactor& ch) noexcept
+    // Writes a single Puma Character to standard output
+    void Write(const PumaType::Character& ch) noexcept
     {
         const PumaType::String tmp = ch.ToString();
         Write(tmp);
@@ -117,8 +117,8 @@ namespace PumaConsole
         WriteLn(PumaType::String(cstr, strlen(cstr)));
     }
 
-    // Writes a single Puma Charactor followed by a newline
-    void WriteLn(const PumaType::Charactor& ch) noexcept
+    // Writes a single Puma Character followed by a newline
+    void WriteLn(const PumaType::Character& ch) noexcept
     {
         Write(ch);
         Write("\n");
