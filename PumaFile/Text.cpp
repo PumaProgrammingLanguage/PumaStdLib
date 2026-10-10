@@ -10,13 +10,13 @@ namespace PumaFile
    Text::Text(const PumaType::String& path, OpenMode mode) noexcept
 		: handle(nullptr), adjustPosition(false)
 	{
-		open(path, mode);
+		Open(path, mode);
 	}
 
 	// Closes the file if open
 	Text::~Text() noexcept
 	{
-		close();
+		Close();
 	}
 
 	// Assign from another Text
@@ -24,7 +24,7 @@ namespace PumaFile
 	{
 		if (this != &other)
 		{
-			close();
+			Close();
 			handle = other.handle;
 		}
 
@@ -32,14 +32,14 @@ namespace PumaFile
 	}
 
 	// Opens the file at path with mode (default is READ_WRITE)
-  bool Text::open(const PumaType::String& path, OpenMode mode) noexcept
+  bool Text::Open(const PumaType::String& path, OpenMode mode) noexcept
 	{
 		if (path.Size() == 0)
 		{
 			return false;
 		}
 
-		close();
+		Close();
 
 		string native(path.ToUTF8(), path.ToUTF8() + path.Size());
 		replace(native.begin(), native.end(), '/', '\\');

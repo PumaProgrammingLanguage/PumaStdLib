@@ -52,9 +52,9 @@ namespace PumaFile
 
     private:
         // Opens the file at path with mode (default is READ_WRITE)
-        bool open(const PumaType::String& path, OpenMode mode) noexcept;
+        bool Open(const PumaType::String& path, OpenMode mode) noexcept;
         // Closes the file if open
-        void close() noexcept;
+        void Close() noexcept;
 
         std::FILE* handle;
         bool adjustPosition;
