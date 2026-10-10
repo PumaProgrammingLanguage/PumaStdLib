@@ -6,8 +6,15 @@
 
 namespace PumaFile
 {
+	// Default constructor
+	Text::Text() noexcept
+		: handle(nullptr), adjustPosition(false)
+	{
+		return;
+	}
+
 	// Open file at path with mode (default is READ_WRITE)
-   Text::Text(const PumaType::String& path, OpenMode mode) noexcept
+	Text::Text(const PumaType::String& path, OpenMode mode) noexcept
 		: handle(nullptr), adjustPosition(false)
 	{
 		Open(path, mode);
@@ -94,28 +101,37 @@ namespace PumaFile
 		return handle != nullptr;
 	}
 
+	// Closes the file if open
+	void Text::Close() noexcept
+	{
+		if (handle != nullptr)
+		{
+			fclose(handle);
+			handle = nullptr;
+		}
+	}
+
+
 	// Reads the next whitespace-delimited word from the file
  PumaType::String Text::Read() noexcept
 	{
 		if (handle != nullptr)
 		{
 			string result;
-			char buffer[1024];
-#if defined(_MSC_VER)
-			if (fscanf_s(handle, "%1023s", buffer, static_cast<unsigned int>(sizeof(buffer))) == 1)
-#else
-			if (fscanf(handle, "%1023s", buffer) == 1)
-#endif
+			int c;
+			while ((c = fgetc(handle)) != EOF)
 			{
-				buffer[1023] = '\0';
-				result = buffer;
+				// end of word on whitespace
+				if (isspace(c))
+					break;
+				result += static_cast<char>(c);
 			}
-         return PumaType::String(result.data(), result.size());
+			return PumaType::String(result.data(), result.size());
 		}
 		else
 		{
 			// File not open
-         return PumaType::String();
+			return PumaType::String();
 		}
 	}
 
@@ -125,18 +141,23 @@ namespace PumaFile
 		if (handle != nullptr)
 		{
 			string result;
-			char buffer[1024];
+			char buffer[1025];
 			while (fgets(buffer, sizeof(buffer), handle) != nullptr)
 			{
 				result += buffer;
 			}
+			// Remove the trailing newline character if present
+			if (result.empty() || result.back() != '\n')
+			{
+				result += '\n';
+			}
 
-         return PumaType::String(result.data(), result.size());
+			return PumaType::String(result.data(), result.size());
 		}
 		else
 		{
-			// File not open
-         return PumaType::String();
+			// File not open return an empty String
+			return PumaType::String();
 		}
 	}
 

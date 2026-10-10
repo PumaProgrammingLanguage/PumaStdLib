@@ -27,6 +27,9 @@ namespace PumaType
         String(const uint8_t* data, uint32_t dataSize) noexcept;
 		// Constructs a String from the raw UTF‑8 bytes and explicit length in bytes.
         String(const char* data, size_t dataSize) noexcept;
+		// Constructs a String from a PumaType::Character.
+        String(const PumaType::Character& ch) noexcept;
+
 		// Destructor - releases owned resources if this String is an owner of long string data.
         ~String() noexcept;
 

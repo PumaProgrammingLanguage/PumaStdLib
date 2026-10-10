@@ -13,8 +13,7 @@ namespace PumaType
 	String::String() noexcept
 	{
 		// Initialize the union to represent an empty string (short string with length 0).
-		packedValues.firstHalf = 0;
-		packedValues.secondHalf = 0;
+		packedValues = {};
 	}
 
 	// Constructs a String from raw UTF‑8 bytes and explicit length in bytes.
@@ -62,8 +61,7 @@ namespace PumaType
 			else
 			{
 				// Allocation failed: fallback to empty string (no heap allocation).
-				packedValues.firstHalf = 0;
-				packedValues.secondHalf = 0;
+				packedValues = {};
 			}
 		}
 	}
@@ -72,8 +70,7 @@ namespace PumaType
 		: String()
 	{
 		// Copy the source string's data into this string.
-		packedValues.firstHalf = source.packedValues.firstHalf;
-		packedValues.secondHalf = source.packedValues.secondHalf;
+		packedValues = source.packedValues;
 
 		// check if we should transfer ownership
 		if(moveOwner && source.isLongOwner())
@@ -84,6 +81,15 @@ namespace PumaType
 			// Set this string as the new owner of the data.
 			SetOwner();
 		}
+	}
+
+	// Constructs a String from a PumaType::Character.
+	String::String(const PumaType::Character& ch) noexcept
+		: String()
+	{
+		packedValues = ch.ToString().packedValues;
+		// If the temporary String was a long owner, we need to set this String as an owner as well.
+		SetOwner();
 	}
 
 	String::~String() noexcept
@@ -101,8 +107,7 @@ namespace PumaType
 		// Release current resources before copying new data.
 		release();
 		// Copy the source string's data into this string.
-		packedValues.firstHalf = source.packedValues.firstHalf;
-		packedValues.secondHalf = source.packedValues.secondHalf;
+		packedValues = source.packedValues;
 		// String assignments doesn't transfer ownership.
 		if (isLongOwner())
 		{
@@ -217,8 +222,7 @@ namespace PumaType
 			delete[] longStr.ptr;
 		}
 
-		packedValues.firstHalf = 0;
-		packedValues.secondHalf = 0;
+		packedValues = {};
 	}
 
 	String String::ToString() noexcept

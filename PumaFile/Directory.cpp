@@ -19,7 +19,7 @@ namespace PumaFile
 			// On error, return empty string
 			if (ec)
 			{
-             return PumaType::String();
+				return PumaType::String();
 			}
 
 			// Normalize to forward slashes - Puma does not support backslashes
@@ -30,7 +30,7 @@ namespace PumaFile
 		}
 
 		// Set current working directory - normalized to forward slashes
-     static bool SetCurrentDirectory(const PumaType::String& path) noexcept
+		bool SetCurrentDirectory(const PumaType::String& path) noexcept
 		{
 			const uint32_t pathSize = path.Size();
 			// Empty path is invalid

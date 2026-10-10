@@ -50,7 +50,6 @@ namespace PumaFile
         // Writes a single Character followed by a newline to the file
         bool WriteLn(const PumaType::Character& ch) noexcept;
 
-    private:
         // Opens the file at path with mode (default is READ_WRITE)
         bool Open(const PumaType::String& path, OpenMode mode) noexcept;
         // Closes the file if open
