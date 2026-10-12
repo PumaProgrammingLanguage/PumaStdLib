@@ -71,6 +71,7 @@ namespace PumaType
 	{
 		// Copy the source string's data into this string.
 		packedValues = source.packedValues;
+		SetBorrower();
 
 		// check if we should transfer ownership
 		if(moveOwner && source.isLongOwner())
@@ -191,28 +192,11 @@ namespace PumaType
 		return sizeof(String);
 	}
 
-	// Returns a pointer to the UTF-8 bytes of the string. The caller is responsible for deleting the returned buffer.
+	// Returns a pointer to the UTF-8 bytes of the string.
+	// Do not delete the returned pointer; it is managed by the String class.
 	const uint8_t* String::ToUTF8() const noexcept
 	{
-		uint8_t* buf = new (nothrow) uint8_t[Size() + 1];
-		if (buf != nullptr)
-		{
-			// Copy the string data into the newly allocated buffer.
-			memcpy(buf, stringData(), Size());
-			// Null-terminate the buffer.
-			buf[Size()] = '\0';
-			return buf;
-		}
-		else
-		{
-			// Allocation failed: return nullptr.
-			return nullptr;
-		}
-	}
-
-	const uint8_t* String::stringData() const
-	{
-		return (this->isShort() ? this->shortStr.codeUnits : this->longStr.ptr);
+		return isShort() ? shortStr.codeUnits : longStr.ptr;
 	}
 
 	void String::release() noexcept

@@ -6,6 +6,8 @@
 
 namespace PumaFile
 {
+	errno_t errorCode = 0;
+
 	// Default constructor
 	Text::Text() noexcept
 		: handle(nullptr), adjustPosition(false)
@@ -82,10 +84,10 @@ namespace PumaFile
 #if defined(_MSC_VER)
 		// Use fopen_s on MSVC
 		FILE* tempHandle = nullptr;
-		if (fopen_s(&tempHandle, native.c_str(), modeString) != 0) {
-			handle = nullptr;
-		} else {
+		if (errorCode = fopen_s(&tempHandle, native.c_str(), modeString) == 0) {
 			handle = tempHandle;
+		} else {
+			handle = nullptr;
 		}
 #else
 		// Use fopen on other compilers
@@ -136,20 +138,16 @@ namespace PumaFile
 	}
 
 	// Read until end of line or end of file
-   PumaType::String Text::ReadLn() noexcept
+	// Returns the line read (newline excluded)
+	PumaType::String Text::ReadLn() noexcept
 	{
 		if (handle != nullptr)
 		{
 			string result;
-			char buffer[1025];
-			while (fgets(buffer, sizeof(buffer), handle) != nullptr)
+			int c;
+			while ((c = fgetc(handle)) != EOF && c != '\n')
 			{
-				result += buffer;
-			}
-			// Remove the trailing newline character if present
-			if (result.empty() || result.back() != '\n')
-			{
-				result += '\n';
+				result += static_cast<char>(c);
 			}
 
 			return PumaType::String(result.data(), result.size());
@@ -175,7 +173,7 @@ namespace PumaFile
 			return true;
 		}
 
-		const size_t written = fwrite(text.ToUTF8(), sizeof(char), size, handle);
+		const size_t written = fwrite(text.ToUTF8(), 1, size, handle);
 		return written == size;
 	}
 

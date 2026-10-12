@@ -37,8 +37,11 @@ namespace PumaType
         String& operator=(const String& source) noexcept;
 		// Get a copy of this string (copy constructor semantics).
         String ToString() noexcept;
-        // Returns a pointer to a null terminated copy of the string.
-        // The caller is responsible for deleting the returned buffer.
+        // Returns internal UTF-8 storage with Size() readable bytes; not NUL-terminated.
+        // Bytes beyond Size() are unspecified and must not be read.
+        // Do not delete the returned pointer; it is managed by the String class.
+        // Repeated calls do not invalidate it. It remains valid while this String
+        // and its underlying storage remain alive and unchanged (including any owner).
         const uint8_t* ToUTF8() const noexcept;
 
         // Set ownership of the string data (for long strings) - 
@@ -101,7 +104,6 @@ namespace PumaType
 		bool isLongOwner() const noexcept;
 
         void release() noexcept;
-        const uint8_t* stringData() const;
     };
 #pragma pack(pop)
 
