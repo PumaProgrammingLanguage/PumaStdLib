@@ -194,6 +194,8 @@ namespace PumaType
 
 	// Returns a pointer to the UTF-8 bytes of the string.
 	// Do not delete the returned pointer; it is managed by the String class.
+	// The returned pointer is valid as long as the String object is alive and not modified.
+	// Return string that is not NUL-terminated; use Size() to determine the length in bytes.
 	const uint8_t* String::ToUTF8() const noexcept
 	{
 		return isShort() ? shortStr.codeUnits : longStr.ptr;
@@ -211,8 +213,8 @@ namespace PumaType
 
 	String String::ToString() noexcept
 	{
-		// Return a copy of this string (copy constructor semantics).
-		return *this;
+		// Create a new String with the same content as this one (copy constructor semantics).
+		return String(*this);
 	}
 
 	// Iterator support: first code unit.

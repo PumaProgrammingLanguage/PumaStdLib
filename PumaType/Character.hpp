@@ -26,7 +26,10 @@ namespace PumaType
         // Convert this UTF-8 character into a Puma String.
         String ToString() const noexcept;
 
-        // Get pointer to the UTF-8 code unit.
+        // Returns a pointer to the UTF-8 bytes of the string.
+        // Do not delete the returned pointer; it is managed by the String class.
+        // The returned pointer is valid as long as the String object is alive and not modified.
+        // Return string that is not NUL-terminated; use Size() to determine the length in bytes.
         const uint8_t* ToUTF8() const noexcept;
 
 		// Returns the number of bytes in the UTF‑8 code unit sequence stored in this Character.
