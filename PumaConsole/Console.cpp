@@ -155,6 +155,13 @@ namespace PumaConsole
         return PumaType::String(buffer.c_str(), buffer.size());
     }
 
+    // Pauses execution until the user presses any key
+    void Pause() noexcept
+    {
+        cin.get();
+    }
+
+
     // Initializes console IO (UTF-8, unsynced stdio)
     CommandPrompt::CommandPrompt() noexcept
     {

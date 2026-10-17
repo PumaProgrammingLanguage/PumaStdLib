@@ -45,6 +45,9 @@ namespace PumaConsole
     // Reads the next line from standard input (newline excluded)
     PumaType::String ReadLn() noexcept;
 
+	// Pauses execution until the user presses any key
+    void Pause() noexcept;
+
     class CommandPrompt
     {
     public:
