@@ -17,8 +17,8 @@ namespace PumaType
 	}
 
 	// Constructs a String from raw UTF‑8 bytes and explicit length in bytes.
-	String::String(const char* data, size_t dataSize) noexcept
-		: String(reinterpret_cast<const uint8_t*>(data), static_cast<uint32_t>(dataSize))
+	String::String(const char* data, uint32_t dataSize) noexcept
+		: String(reinterpret_cast<const uint8_t*>(data), dataSize)
 	{
 	}
 
