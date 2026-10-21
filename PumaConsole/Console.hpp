@@ -19,7 +19,7 @@ namespace PumaConsole
     void Write(const PumaType::String& str) noexcept;
 
     // Writes a uint8_t string to standard output
-    void Write(const uint8_t* str, const uint32_t size) noexcept;
+    void Write(const uint8_t* str, const size_t size) noexcept;
 
     // Writes a C-string to standard output
     void Write(const char* cstr) noexcept;

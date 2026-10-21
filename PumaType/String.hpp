@@ -24,9 +24,9 @@ namespace PumaType
 		// Copy constructor - creates a new String with the same content as the source. Can transfer ownership.
         String(String& source, bool moveOwner = false) noexcept;
 		// Constructs a String from the raw UTF‑8 bytes and explicit length in bytes.
-        String(const uint8_t* data, uint32_t dataSize) noexcept;
+        String(const uint8_t* data, size_t dataSize) noexcept;
 		// Constructs a String from the raw char bytes and explicit length in bytes.
-        String(const char* data, uint32_t dataSize) noexcept;
+        String(const char* data, size_t dataSize) noexcept;
 		// Constructs a String from a PumaType::Character.
         String(const PumaType::Character& ch) noexcept;
 
@@ -57,9 +57,9 @@ namespace PumaType
         // get str length - length in characters (code points)
         uint32_t Length() const noexcept;
         // get str size - length in bytes
-        uint32_t Size() const noexcept;
+        size_t Size() const noexcept;
         // get variable size - number of bytes used to store the variable
-        uint32_t SizeVar() const noexcept;
+        size_t SizeVar() const noexcept;
 
         // iterator range support - now returns StringIterator
 		// First() returns an iterator to the first UTF-8 code unit of the string.

@@ -45,7 +45,7 @@ namespace PumaConsole
     // Writes a Puma String to standard output
     void Write(const PumaType::String& str) noexcept
     {
-        const uint32_t strSize = str.Size();
+        const size_t strSize = str.Size();
 
         if (strSize == 0)
         {
@@ -58,7 +58,7 @@ namespace PumaConsole
     }
 
     // Writes a uint8_t string to standard output
-    void Write(const uint8_t* str, const uint32_t size) noexcept
+    void Write(const uint8_t* str, const size_t size) noexcept
     {
         if (str == nullptr || size == 0)
         {

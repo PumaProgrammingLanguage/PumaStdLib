@@ -167,7 +167,7 @@ namespace PumaFile
 			return false;
 		}
 
-		const uint32_t size = text.Size();
+		const size_t size = text.Size();
 		if (size == 0)
 		{
 			return true;

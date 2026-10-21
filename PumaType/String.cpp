@@ -17,13 +17,13 @@ namespace PumaType
 	}
 
 	// Constructs a String from raw UTF‑8 bytes and explicit length in bytes.
-	String::String(const char* data, uint32_t dataSize) noexcept
+	String::String(const char* data, size_t dataSize) noexcept
 		: String(reinterpret_cast<const uint8_t*>(data), dataSize)
 	{
 	}
 
 	// Constructs a String from raw UTF‑8 bytes and explicit length in bytes.
-	String::String(const uint8_t* data, uint32_t dataSize) noexcept
+	String::String(const uint8_t* data, size_t dataSize) noexcept
 		: String()
 	{
 		if (data == nullptr || dataSize == 0)
@@ -167,9 +167,9 @@ namespace PumaType
 	{
 		uint32_t charCount = 0;
 		const uint8_t* ptr = isShort() ? shortStr.codeUnits : longStr.ptr;
-		const uint32_t strSize = Size();
+		const size_t strSize = Size();
 
-		for (uint32_t i = 0; i < strSize; )
+		for (size_t i = 0; i < strSize; )
 		{
 			const uint8_t c = ptr[i];
 			const uint8_t charSize = Character::GetCharSize(c);
@@ -180,14 +180,14 @@ namespace PumaType
 		return charCount;
 	}
 
-	uint32_t String::Size() const noexcept
+	size_t String::Size() const noexcept
 	{
 		return isShort()
-			? static_cast<uint32_t>(shortStr.tag & LENGTH_MASK)
-			: static_cast<uint32_t>(longStr.strSize);
+			? static_cast<size_t>(shortStr.tag & LENGTH_MASK)
+			: static_cast<size_t>(longStr.strSize);
 	}
 
-	uint32_t String::SizeVar() const noexcept
+	size_t String::SizeVar() const noexcept
 	{
 		return sizeof(String);
 	}
@@ -227,7 +227,7 @@ namespace PumaType
 	StringIterator String::Last() const noexcept
 	{
 	    const uint8_t* first = (const uint8_t*)ToUTF8();
-	    const uint32_t size  = Size();
+	    const size_t size  = Size();
 
 	    if (size == 0 || first == nullptr)
 	    {

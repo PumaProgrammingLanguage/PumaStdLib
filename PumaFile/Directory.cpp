@@ -32,7 +32,7 @@ namespace PumaFile
 		// Set current working directory - normalized to forward slashes
 		bool SetCurrentDirectory(const PumaType::String& path) noexcept
 		{
-			const uint32_t pathSize = path.Size();
+			const size_t pathSize = path.Size();
 			// Empty path is invalid
 			if (pathSize == 0)
 			{
