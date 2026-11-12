@@ -35,6 +35,10 @@ namespace PumaType
 
 		// Assignment - does not transfer ownership.
         String& operator=(const String& source) noexcept;
+		// Append a string to this string (concatenation). Returns a new String with the combined content.
+		String& operator+=(const String& other) noexcept;
+		// Concatenation operator - returns a new String that is the concatenation of two strings.
+        String operator+(const String& other) const noexcept;
 		// Get a copy of this string (copy constructor semantics).
         String ToString() noexcept;
         // Returns a pointer to the UTF-8 bytes of the string.

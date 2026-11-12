@@ -117,6 +117,81 @@ namespace PumaType
 		return *this;
 	}
 
+	// Append a string to this string (concatenation). Returns a new String with the combined content.
+	String& String::operator+=(const String& other) noexcept
+	{
+		// Implementation of operator+=
+		size_t stringSize = Size() + other.Size();
+
+		// Check if the string can be stored as a short string (fits within the codeUnits array).
+		if (stringSize <= sizeof(shortStr.codeUnits))
+		{
+			// Short string: store directly in the union (no heap allocation).
+			// Long flag and owner flags are already 0. 
+
+			if (stringSize > 0)
+			{
+				// append the other string data into the codeUnits array starting at one beyond the current size.
+				memcpy(shortStr.codeUnits + Size(), other.shortStr.codeUnits, other.Size());
+			}
+			else
+			{
+				// If the resulting string is empty, just set the tag to 0 which sets the length to 0.
+				shortStr.tag = 0;
+			}
+			// Update the length after copying so Size() still gives the original append offset.
+			shortStr.tag = static_cast<uint8_t>(stringSize & LENGTH_MASK);
+		}
+		else
+		{
+			if (isLongOwner())
+			{
+				// If this string is a long owner, we can reallocate the existing buffer to accommodate the new size.
+				uint8_t* newBuf = new (nothrow) uint8_t[stringSize];
+				if (newBuf != nullptr)
+				{
+					// Copy the existing string data into the new buffer.
+					memcpy(newBuf, longStr.ptr, Size());
+					// Append the other string data into the new buffer.
+					memcpy(newBuf + Size(), other.ToUTF8(), other.Size());
+					// Free the old buffer.
+					delete[] longStr.ptr;
+					// Update the pointer and size.
+					longStr.ptr = newBuf;
+					longStr.strSize = static_cast<uint32_t>(stringSize);
+				}
+				// else allocation failed: keep the original string.
+			}
+			else
+			{
+				// If this string is not a long owner, we need to allocate a new buffer for the concatenated result.
+				uint8_t* buf = new (nothrow) uint8_t[stringSize];
+				if (buf != nullptr)
+				{
+					// Copy the existing string data into the new buffer.
+					memcpy(buf, ToUTF8(), Size());
+					// Append the other string data into the new buffer.
+					memcpy(buf + Size(), other.ToUTF8(), other.Size());
+					longStr.ptr = buf;
+					longStr.tag = LONG_OWNER_FLAG;
+					longStr.strSize = static_cast<uint32_t>(stringSize);
+				}
+				// else allocation failed: keep the original string.
+			}
+		}
+		
+		return *this;
+	}
+
+	// Concatenation operator - returns a new String that is the concatenation of two strings.
+	String String::operator+(const String& other) const noexcept
+	{
+		String temp(ToUTF8(), Size()); // Create an independent copy of the current string
+		temp += other; // Use operator+= to append the other string
+		return String(temp, true); // Transfer ownership before the temporary is destroyed
+	}
+
+
 	bool String::isShort() const noexcept
 	{
 		// A short string is identified by the LONG_FLAG bit not set (SHORT_FLAG) in the tag.

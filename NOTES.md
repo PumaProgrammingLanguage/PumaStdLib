@@ -11,12 +11,15 @@
 - [x] Validate ReadLn with a temporary MSVC runtime harness: successive hello/world reads, empty lines/files, EOF, unopened files, 1023/1024/1025/8192-byte lines, final unterminated lines, CRLF text mode, multibyte UTF-8, and embedded NUL; full solution build passed.
 - [x] Fix default String copy ownership: long copies are borrowers; explicit transfer from an owner clears source ownership and makes the destination owner; short strings retain value-copy semantics.
 - [x] Validate String copy ownership with a temporary MSVC runtime harness: default/explicit borrower copies, copies from borrowers, ownership transfer, borrower/source destruction order, ToString, 0/1/15/16/8192-byte inputs, and unchanged 16-byte layout; full solution build passed.
+- [x] Fix `String::operator+` to return by value with explicit ownership transfer and exact byte lengths; correct the short-string append offset used by concatenation.
+- [x] Validate concatenation with a temporary MSVC runtime harness with named return optimization disabled: all 64 pairs of 0/1/7/14/15/16/64/8192-byte operands, ownership, operand destruction, borrowing, unchanged inputs, self-concatenation, chaining, embedded NUL, and multibyte UTF-8; full solution build passed.
 
 ## General Unit Test TODO
 
 1. [ ] Add compiler-module regression coverage for generated `ToUTF8()`/`Size()` calls when the compiler test workspace is available, including explicit expected C/C++ output. This runtime solution has no registered unit tests.
 2. [ ] Add compiler-module regression coverage for successive `Text::ReadLn()` calls and exact `Size()` results, including explicit expected C/C++ output, when the compiler test workspace is available.
 3. [ ] Add compiler-module regression coverage for String borrower copies and explicit ownership transfer, including explicit expected C/C++ output, when the compiler test workspace is available.
+4. [ ] Add compiler-module regression coverage for String concatenation value returns and result ownership, including explicit expected C/C++ output, when the compiler test workspace is available.
 
 ## Postponed / Special-Feature Unit Test TODO
 
